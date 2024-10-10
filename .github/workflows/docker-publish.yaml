@@ -43,7 +43,7 @@ jobs:
           tags: ${{ steps.steampipemeta.outputs.tags }}
           labels: ${{ steps.steampipemeta.outputs.labels }}
           file: ./steampipe/Dockerfile
-          build-args: STEAMPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/steampipe/releases/download/v0.24.2/steampipe_linux_amd64.tar.gz"
+          build-args: STEAMPIPE_BINARY_DOWNLOAD_URL=https://github.com/turbot/steampipe/releases/download/v0.24.2/steampipe_linux_amd64.tar.gz
 
       - name: Extract metadata (tags, labels) for Docker
         id: powerpipemeta
@@ -59,4 +59,4 @@ jobs:
           tags: ${{ steps.powerpipemeta.outputs.tags }}
           labels: ${{ steps.powerpipemeta.outputs.labels }}
           file: ./powerpipe/Dockerfile
-          build-args: POWERPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/powerpipe/releases/download/v0.4.4/powerpipe.linux.amd64.tar.gz"
+          build-args: POWERPIPE_BINARY_DOWNLOAD_URL=https://github.com/turbot/powerpipe/releases/download/v0.4.4/powerpipe.linux.amd64.tar.gz
