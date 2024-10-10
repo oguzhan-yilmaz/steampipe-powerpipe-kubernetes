@@ -9,7 +9,8 @@ on:
       - 'main'
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}-terraform-import
+  STEAMPIPE_IMAGE_NAME: ${{ github.repository }}--steampipe
+  POWERPIPE_IMAGE_NAME: ${{ github.repository }}--powerpipe
 
 jobs:
   build-and-push-balcony-terraform-import-docker-image:
@@ -33,7 +34,7 @@ jobs:
         id: steampipemeta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/steampipe
+          images:  ${{ env.REGISTRY }}/${{ env.POWERPIPE_IMAGE_NAME }}
 
       - name: Build and push Docker image -- steampipe
         uses: docker/build-push-action@v4
@@ -49,7 +50,7 @@ jobs:
         id: powerpipemeta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/powerpipe
+          images:  ${{ env.REGISTRY }}/${{ env.STEAMPIPE_IMAGE_NAME }}
 
       - name: Build and push Docker image -- powerpipe
         uses: docker/build-push-action@v4
