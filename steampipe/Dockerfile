@@ -4,7 +4,7 @@ FROM debian:bookworm-slim
 ARG PRE_INSTALL_PLUGINS="steampipe kubernetes"
 ARG STEAMPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/steampipe/releases/download/v0.24.2/steampipe_linux_arm64.tar.gz"
 # space separated list of plugins to install at runtime
-ENV INSTALL_PLUGINS "steampipe kubernetes"
+ENV INSTALL_PLUGINS=""
 
 WORKDIR /app
 
@@ -14,8 +14,10 @@ RUN curl -sL -o steampipe.tar.gz ${STEAMPIPE_BINARY_DOWNLOAD_URL} \
     && tar -xzvf steampipe.tar.gz \
     && rm steampipe.tar.gz
     
-RUN groupadd -g 1234 steamgroup && \
-    useradd -m -u 1234 -g steamgroup steampipe
+RUN groupadd -g 1234 steampipe && \
+    useradd -m -u 1234 -g steampipe steampipe && \
+    chown -R steampipe:steampipe /app
+
 USER steampipe
 
 # start the service beforehand for faster startup time
