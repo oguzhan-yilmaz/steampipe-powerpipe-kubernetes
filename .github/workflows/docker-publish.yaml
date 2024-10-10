@@ -42,7 +42,7 @@ jobs:
           push: true
           tags: ${{ steps.steampipemeta.outputs.tags }}
           labels: ${{ steps.steampipemeta.outputs.labels }}
-          file: Dockerfile
+          file: ./steampipe/Dockerfile
 
       - name: Extract metadata (tags, labels) for Docker
         id: powerpipemeta
@@ -57,4 +57,4 @@ jobs:
           push: true
           tags: ${{ steps.powerpipemeta.outputs.tags }}
           labels: ${{ steps.powerpipemeta.outputs.labels }}
-          file: Dockerfile
+          file: ./powerpipe/Dockerfile
