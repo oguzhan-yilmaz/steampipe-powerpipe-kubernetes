@@ -1,0 +1,60 @@
+name: Build and publish a steampipe and powerpipe images to ghcr.io
+on:
+  # publish on releases, e.g. v2.1.13 (image tagged as "2.1.13" - "v" prefix is removed)
+  # release:
+  #   types: [ published ]
+
+  push:
+    branches:
+      - 'main'
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}-terraform-import
+
+jobs:
+  build-and-push-balcony-terraform-import-docker-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/steampipe
+
+      - name: Build and push Docker image -- steampipe
+        uses: docker/build-push-action@v4
+        with:
+          context: ./steampipe
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          file: Dockerfile
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/powerpipe
+
+      - name: Build and push Docker image -- powerpipe
+        uses: docker/build-push-action@v4
+        with:
+          context: ./powerpipe
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          file: Dockerfile
