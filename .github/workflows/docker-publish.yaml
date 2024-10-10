@@ -30,7 +30,7 @@ jobs:
           password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
-        id: meta
+        id: steampipemeta
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/steampipe
@@ -40,12 +40,12 @@ jobs:
         with:
           context: ./steampipe
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.steampipemeta.outputs.tags }}
+          labels: ${{ steps.steampipemeta.outputs.labels }}
           file: Dockerfile
 
       - name: Extract metadata (tags, labels) for Docker
-        id: meta
+        id: powerpipemeta
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/powerpipe
@@ -55,6 +55,6 @@ jobs:
         with:
           context: ./powerpipe
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.powerpipemeta.outputs.tags }}
+          labels: ${{ steps.powerpipemeta.outputs.labels }}
           file: Dockerfile
