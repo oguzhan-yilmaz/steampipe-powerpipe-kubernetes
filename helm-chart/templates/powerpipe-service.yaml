@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "powerpipe.fullname" . }}
+  labels:
+    {{- include "powerpipe.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.powerpipe.service.type }}
+  ports:
+    - port: {{ .Values.powerpipe.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "powerpipe.selectorLabels" . | nindent 4 }}

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "steampipe.fullname" . }}
+  labels:
+    {{- include "steampipe.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.steampipe.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "steampipe.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.steampipe.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "steampipe.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.steampipe.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "steampipe.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.steampipe.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.steampipe.securityContext | nindent 12 }}
+          image: "{{ .Values.steampipe.image.repository }}:{{ .Values.steampipe.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.steampipe.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.steampipe.resources | nindent 12 }}
+      {{- with .Values.steampipe.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.steampipe.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.steampipe.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

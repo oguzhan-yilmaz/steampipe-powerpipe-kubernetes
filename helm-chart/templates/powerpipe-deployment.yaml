@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "powerpipe.fullname" . }}
+  labels:
+    {{- include "powerpipe.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.powerpipe.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "powerpipe.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.powerpipe.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "powerpipe.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.powerpipe.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "powerpipe.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.powerpipe.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.powerpipe.securityContext | nindent 12 }}
+          image: "{{ .Values.powerpipe.image.repository }}:{{ .Values.powerpipe.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.powerpipe.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.powerpipe.resources | nindent 12 }}
+      {{- with .Values.powerpipe.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.powerpipe.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.powerpipe.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
