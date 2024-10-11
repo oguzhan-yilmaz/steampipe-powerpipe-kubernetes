@@ -7,7 +7,6 @@ services:
         PRE_INSTALL_PLUGINS: "steampipe kubernetes" 
     environment:
         STEAMPIPE_DATABASE_PASSWORD: "abcd1234"
-        STEAMPIPE_DB_PASS: "abcd1234"      
         INSTALL_PLUGINS: "steampipe kubernetes"
     ports:
       - "9193:9193"
