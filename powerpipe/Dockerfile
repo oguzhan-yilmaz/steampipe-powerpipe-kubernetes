@@ -25,7 +25,7 @@ RUN curl -sL -o powerpipe.tar.gz ${POWERPIPE_BINARY_DOWNLOAD_URL} \
 
 RUN if [ -n "${PRE_INSTALL_MODS}" ]; then ./powerpipe mod install ${PRE_INSTALL_MODS} > /dev/null; fi
 
-COPY entrypoint.sh .
+COPY *.sh .
 
 EXPOSE 9033
 
