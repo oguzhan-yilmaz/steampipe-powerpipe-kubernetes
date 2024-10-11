@@ -6,6 +6,8 @@ ARG POWERPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/powerpipe/releases/
 ARG PRE_INSTALL_MODS="github.com/turbot/steampipe-mod-kubernetes-insights github.com/turbot/steampipe-mod-kubernetes-compliance"
 # space separated list of plugins to install at runtime
 ENV INSTALL_MODS=""
+ENV PIPES_INSTALL_DIR="/app/.pipes"
+ENV POWERPIPE_INSTALL_DIR="/app/.powerpipe"
 
 WORKDIR /app
 
