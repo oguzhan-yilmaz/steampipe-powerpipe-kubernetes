@@ -54,11 +54,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the service account to use
 */}}
 {{- define "powerpipe.serviceAccountName" -}}
-{{- if .Values.powerpipe.serviceAccount.create }}
-{{- default (include "powerpipe.fullname" .) .Values.powerpipe.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.powerpipe.serviceAccount.name }}
-{{- end }}
+default
 {{- end }}
 
 

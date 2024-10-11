@@ -27,6 +27,11 @@ spec:
         {{- toYaml .Values.steampipe.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ include "steampipe.fullname" . }}
+          envFrom:
+          - configMapRef:
+              name: {{ include "steampipe.fullname" . }}-cm
+          - secretRef:
+              name: {{ include "steampipe.fullname" . }}-secret
           securityContext:
             {{- toYaml .Values.steampipe.securityContext | nindent 12 }}
           image: "{{ .Values.steampipe.image.repository }}:{{ .Values.steampipe.image.tag | default .Chart.AppVersion }}"

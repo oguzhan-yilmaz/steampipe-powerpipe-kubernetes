@@ -23,6 +23,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "powerpipe.serviceAccountName" . }}
+      automountServiceAccountToken: true
       securityContext:
         {{- toYaml .Values.powerpipe.podSecurityContext | nindent 8 }}
       containers:
@@ -31,17 +32,22 @@ spec:
             {{- toYaml .Values.powerpipe.securityContext | nindent 12 }}
           image: "{{ .Values.powerpipe.image.repository }}:{{ .Values.powerpipe.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.powerpipe.image.pullPolicy }}
+          envFrom:
+          - configMapRef:
+              name: {{ include "powerpipe.fullname" . }}-cm
+          - secretRef:
+              name: {{ include "powerpipe.fullname" . }}-secret
           ports:
             - name: http
               containerPort: {{ .Values.powerpipe.containerPort }}
               protocol: TCP
-          livenessProbe:
-            exec:
-              command:
-              - bash
-              - ./healthcheck.sh
-            initialDelaySeconds: 10
-            periodSeconds: 10
+          #livenessProbe:
+          #  exec:
+          #    command:
+          #    - bash
+          #    - ./healthcheck.sh
+          #  initialDelaySeconds: 10
+          #  periodSeconds: 10
           resources:
             {{- toYaml .Values.powerpipe.resources | nindent 12 }}
       {{- with .Values.powerpipe.nodeSelector }}
