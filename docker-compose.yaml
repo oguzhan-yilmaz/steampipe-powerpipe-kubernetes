@@ -1,0 +1,50 @@
+services:
+  steampipe:
+    build:
+      context: ./steampipe
+      args:
+        STEAMPIPE_BINARY_DOWNLOAD_URL: https://github.com/turbot/steampipe/releases/download/v0.24.2/steampipe_linux_arm64.tar.gz
+        PRE_INSTALL_PLUGINS: "steampipe kubernetes" 
+    environment:
+        STEAMPIPE_DATABASE_PASSWORD: "abcd1234"
+        STEAMPIPE_DB_PASS: "abcd1234"      
+        INSTALL_PLUGINS: "steampipe kubernetes"
+    ports:
+      - "9193:9193"
+    networks:
+      - turbot
+    healthcheck:
+      test: ["CMD-SHELL", "bash ./healthcheck.sh"]
+      interval: 10s
+      retries: 10
+      start_period: 20s
+      timeout: 5s
+
+  powerpipe:
+    build:
+      context: ./powerpipe
+      args:
+        PRE_INSTALL_MODS: "github.com/turbot/steampipe-mod-kubernetes-insights github.com/turbot/steampipe-mod-kubernetes-compliance"
+        POWERPIPE_BINARY_DOWNLOAD_URL: https://github.com/turbot/powerpipe/releases/download/v0.4.4/powerpipe.linux.arm64.tar.gz
+    environment:
+      INSTALL_MODS: "github.com/turbot/steampipe-mod-kubernetes-insights github.com/turbot/steampipe-mod-kubernetes-compliance"
+      POWERPIPE_DATABASE: postgres://steampipe:abcd1234@steampipe:9193/steampipe
+    ports:
+      - "9033:9033"
+    depends_on:
+      steampipe:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test: ["CMD-SHELL", "bash ./healthcheck.sh"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+      timeout: 5s
+    networks:
+      - turbot
+
+
+networks:
+  turbot:
+    driver: bridge
