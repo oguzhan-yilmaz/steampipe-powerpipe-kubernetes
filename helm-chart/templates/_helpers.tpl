@@ -2,7 +2,7 @@
 Expand the name of the chart.
 */}}
 {{- define "powerpipe.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+powerpipe
 {{- end }}
 
 {{/*
@@ -66,7 +66,7 @@ Create the name of the service account to use
 Expand the name of the chart.
 */}}
 {{- define "steampipe.name" -}}
-{{- default .Chart.Name .Values.steampipe.nameOverride | trunc 63 | trimSuffix "-" }}
+steampipe
 {{- end }}
 
 {{/*

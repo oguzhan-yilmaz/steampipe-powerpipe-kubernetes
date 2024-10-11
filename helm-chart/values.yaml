@@ -1,6 +1,6 @@
 powerpipe:
   replicaCount: 1
-
+  containerPort: 9033
   image:
     repository: ghcr.io/oguzhan-yilmaz/steampipe-powerpipe-kubernetes--powerpipe
     pullPolicy: Always
@@ -8,8 +8,8 @@ powerpipe:
     tag: "main"
 
   imagePullSecrets: []
-  nameOverride: ""
-  fullnameOverride: ""
+  nameOverride: "powerpipe"
+  fullnameOverride: "powerpipe"
 
   serviceAccount:
     # Specifies whether a service account should be created
@@ -25,13 +25,11 @@ powerpipe:
   podSecurityContext: {}
     # fsGroup: 2000
 
-  securityContext: {}
-    # capabilities:
-    #   drop:
-    #   - ALL
-    # readOnlyRootFilesystem: true
-    # runAsNonRoot: true
-    # runAsUser: 1000
+  securityContext:
+    runAsUser: 1234
+    runAsGroup: 1234
+    runAsNonRoot: true
+
 
   service:
     type: ClusterIP
@@ -74,6 +72,7 @@ powerpipe:
 
 steampipe:
   replicaCount: 1
+  containerPort: 9193
   image:
     repository: ghcr.io/oguzhan-yilmaz/steampipe-powerpipe-kubernetes--steampipe
     pullPolicy: Always
@@ -81,12 +80,12 @@ steampipe:
     tag: "main"
 
   imagePullSecrets: []
-  nameOverride: ""
-  fullnameOverride: ""
+  nameOverride: "steampipe"
+  fullnameOverride: "steampipe"
 
   serviceAccount:
     # Specifies whether a service account should be created
-    create: true
+    create: false
     # Annotations to add to the service account
     annotations: {}
     # The name of the service account to use.
@@ -98,13 +97,10 @@ steampipe:
   podSecurityContext: {}
     # fsGroup: 2000
 
-  securityContext: {}
-    # capabilities:
-    #   drop:
-    #   - ALL
-    # readOnlyRootFilesystem: true
-    # runAsNonRoot: true
-    # runAsUser: 1000
+  securityContext:
+    runAsUser: 1234
+    runAsGroup: 1234
+    runAsNonRoot: true
 
   service:
     type: ClusterIP
