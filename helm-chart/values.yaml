@@ -104,7 +104,7 @@ steampipe:
 
   service:
     type: ClusterIP
-    port: 80
+    port: 9193
 
   ingress:
     enabled: false
