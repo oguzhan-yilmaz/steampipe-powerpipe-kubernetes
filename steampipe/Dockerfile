@@ -20,9 +20,9 @@ RUN groupadd -g 1234 steampipe && \
 
 USER steampipe
 
-# # start the service beforehand for faster startup time
-# RUN ./steampipe service start \
-#     && ./steampipe service stop
+# start the service beforehand for faster startup time
+RUN ./steampipe service start \
+    && ./steampipe service stop
 
 RUN if [ -n "${PRE_INSTALL_PLUGINS}" ]; then ./steampipe plugin install ${PRE_INSTALL_PLUGINS} > /dev/null; fi
 

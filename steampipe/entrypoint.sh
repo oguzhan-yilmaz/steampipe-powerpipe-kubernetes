@@ -11,7 +11,9 @@ fi
 echo "Updating Plugins..."
 ./steampipe plugin update --all
 
-echo "Plugin List:"
+
+# echo "Initializing Steampipe DB (this may take couple minutes)..."
+echo "Steampipe Plugins:"
 ./steampipe plugin list
 
 echo "Starting Steampipe:"
