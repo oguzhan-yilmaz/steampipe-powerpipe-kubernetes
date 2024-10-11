@@ -2,9 +2,13 @@
 
 echo "Running entrypoint.sh script..."
 
+
 if [ -n "$INSTALL_MODS" ]; then
-    echo "Installing Mods: $INSTALL_MODS"
-    ./powerpipe mod install "$INSTALL_MODS" > /dev/null
+    echo "INSTALL_MODS variable is defined: $INSTALL_MODS"
+    for mod in $INSTALL_MODS; do
+        echo "Installing Mod: $mod"
+        ./powerpipe mod install "$mod" > /dev/null
+    done
 fi
 
 echo "Updating Plugins..."
