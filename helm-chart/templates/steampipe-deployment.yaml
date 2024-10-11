@@ -40,8 +40,9 @@ spec:
               command:
               - bash
               - ./healthcheck.sh
-            initialDelaySeconds: 10
+            initialDelaySeconds: 120
             periodSeconds: 10
+            failureThreshold: 6
           resources:
             {{- toYaml .Values.steampipe.resources | nindent 12 }}
       {{- with .Values.steampipe.nodeSelector }}

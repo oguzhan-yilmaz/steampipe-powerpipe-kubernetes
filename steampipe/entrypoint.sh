@@ -9,14 +9,10 @@ if [ -n "$INSTALL_PLUGINS" ]; then
 fi
 
 echo "Updating Plugins..."
-./steampipe plugin update --all > /dev/null
+./steampipe plugin update --all
 
 echo "Plugin List:"
 ./steampipe plugin list
-
-
-printenv 
-
 
 echo "Starting Steampipe:"
 ./steampipe service start --foreground
