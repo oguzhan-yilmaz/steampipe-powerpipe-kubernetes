@@ -34,7 +34,7 @@ jobs:
         id: steampipemeta
         uses: docker/metadata-action@v4
         with:
-          images:  ${{ env.REGISTRY }}/${{ env.POWERPIPE_IMAGE_NAME }}
+          images:  ${{ env.REGISTRY }}/${{ env.STEAMPIPE_IMAGE_NAME }}
 
       - name: Build and push Docker image -- steampipe
         uses: docker/build-push-action@v4
@@ -50,7 +50,7 @@ jobs:
         id: powerpipemeta
         uses: docker/metadata-action@v4
         with:
-          images:  ${{ env.REGISTRY }}/${{ env.STEAMPIPE_IMAGE_NAME }}
+          images:  ${{ env.REGISTRY }}/${{ env.POWERPIPE_IMAGE_NAME }}
 
       - name: Build and push Docker image -- powerpipe
         uses: docker/build-push-action@v4
