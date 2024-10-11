@@ -14,5 +14,9 @@ echo "Updating Plugins..."
 echo "Plugin List:"
 ./steampipe plugin list
 
+
+printenv 
+
+
 echo "Starting Steampipe:"
-./steampipe service start --foreground 
+./steampipe service start --foreground
