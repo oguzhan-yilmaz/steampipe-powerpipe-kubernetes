@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "steampipe.fullname" . }}-cm
-  labels:
-    {{- include "steampipe.labels" . | nindent 4 }}
-data:
-  INSTALL_MODS: "github.com/turbot/steampipe-mod-kubernetes-insights github.com/turbot/steampipe-mod-kubernetes-compliance"
-  INSTALL_PLUGINS: "steampipe kubernetes"

@@ -34,9 +34,9 @@ spec:
           imagePullPolicy: {{ .Values.powerpipe.image.pullPolicy }}
           envFrom:
           - configMapRef:
-              name: {{ include "powerpipe.fullname" . }}-cm
+              name: {{ include "powerpipe.fullname" . }}-cm-env-vars
           - secretRef:
-              name: {{ include "powerpipe.fullname" . }}-secret
+              name: {{ include "powerpipe.fullname" . }}-secret-env-vars
           ports:
             - name: http
               containerPort: {{ .Values.powerpipe.containerPort }}

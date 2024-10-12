@@ -29,13 +29,14 @@ spec:
         - name: {{ include "steampipe.fullname" . }}
           envFrom:
           - configMapRef:
-              name: {{ include "steampipe.fullname" . }}-cm
+              name: {{ include "steampipe.fullname" . }}-cm-env-vars
           - secretRef:
-              name: {{ include "steampipe.fullname" . }}-secret
+              name: {{ include "steampipe.fullname" . }}-secret-env-vars
           securityContext:
             {{- toYaml .Values.steampipe.securityContext | nindent 12 }}
           image: "{{ .Values.steampipe.image.repository }}:{{ .Values.steampipe.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.steampipe.image.pullPolicy }}
+          #command: ["sleep", "3000"]
           ports:
             - name: http
               containerPort: {{ .Values.steampipe.containerPort }}
@@ -45,11 +46,34 @@ spec:
               command:
               - bash
               - ./healthcheck.sh
-            initialDelaySeconds: 120
+            initialDelaySeconds: 60
             periodSeconds: 10
             failureThreshold: 6
           resources:
             {{- toYaml .Values.steampipe.resources | nindent 12 }}
+          volumeMounts:
+          - name: steampipe-config-volume
+            mountPath: /app/.steampipe/config/aws.spc
+            subPath: aws.spc
+          - name: steampipe-config-volume
+            mountPath: /app/.steampipe/config/kubernetes.spc
+            subPath: kubernetes.spc
+          - name: steampipe-config-volume
+            mountPath: /app/.steampipe/config/gcp.spc
+            subPath: gcp.spc
+      volumes:
+      - name: steampipe-config-volume
+        configMap:
+          name: {{ include "steampipe.fullname" . }}-config
+          optional: true
+          defaultMode: 0777
+          items:
+            - key: aws.spc
+              path: aws.spc  # same as subPath
+            - key: kubernetes.spc
+              path: kubernetes.spc  # same as subPath
+            - key: gcp.spc
+              path: gcp.spc  # same as subPath
       {{- with .Values.steampipe.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
