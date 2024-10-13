@@ -22,7 +22,8 @@ USER steampipe
 
 # start the service beforehand for faster startup time
 RUN ./steampipe service start \
-    && ./steampipe service stop
+    && ./steampipe service stop \
+    && chown -R steampipe:steampipe /app
 
 RUN if [ -n "${PRE_INSTALL_PLUGINS}" ]; then ./steampipe plugin install ${PRE_INSTALL_PLUGINS} > /dev/null; fi
 
