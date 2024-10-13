@@ -6,18 +6,19 @@ ARG POWERPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/powerpipe/releases/
 ARG PRE_INSTALL_MODS="github.com/turbot/steampipe-mod-kubernetes-insights github.com/turbot/steampipe-mod-kubernetes-compliance"
 # space separated list of plugins to install at runtime
 ENV INSTALL_MODS=""
-ENV PIPES_INSTALL_DIR="/app/.pipes"
-ENV POWERPIPE_INSTALL_DIR="/app/.powerpipe"
+ENV PIPES_INSTALL_DIR="/home/powerpipe/.pipes"
+ENV POWERPIPE_INSTALL_DIR="/home/powerpipe/.powerpipe"
 
-WORKDIR /app
 
 RUN apt update -y && apt upgrade -y && apt install curl tar unzip -y
 
 RUN groupadd -g 1234 powerpipe && \
     useradd -m -u 1234 -g powerpipe powerpipe && \
-    chown -R powerpipe:powerpipe /app
+    chown -R powerpipe:powerpipe /home/powerpipe
 
 USER powerpipe
+
+WORKDIR /home/powerpipe
 
 RUN curl -sL -o powerpipe.tar.gz ${POWERPIPE_BINARY_DOWNLOAD_URL} \
     && tar -xzvf powerpipe.tar.gz \
