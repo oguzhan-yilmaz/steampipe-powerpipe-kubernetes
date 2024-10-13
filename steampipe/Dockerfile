@@ -1,16 +1,21 @@
 FROM debian:bookworm-slim
 
+ENV DEBIAN_FRONTEND=noninteractive
 # space separated list of plugins at build time
 ARG PRE_INSTALL_PLUGINS="steampipe kubernetes"
 ARG STEAMPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/steampipe/releases/download/v0.24.2/steampipe_linux_arm64.tar.gz"
 # space separated list of plugins to install at runtime
 ENV INSTALL_PLUGINS=""
-ENV STEAMPIPE_INSTALL_DIR="/home/powerpipe/.steampipe"
+ENV STEAMPIPE_INSTALL_DIR="/home/steampipe/.steampipe"
 
-RUN apt update -y && apt upgrade -y && apt install curl tar unzip -y
 
-RUN groupadd -g 1234 steampipe && \
-    useradd -m -u 1234 -g steampipe steampipe
+RUN apt-get update -y \
+    && apt-get upgrade -y \
+    && apt-get install -y curl tar unzip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd -g 1234 steampipe \
+    && useradd -m -u 1234 -g steampipe steampipe
 
 USER steampipe
 
@@ -21,10 +26,10 @@ RUN curl -sL -o steampipe.tar.gz ${STEAMPIPE_BINARY_DOWNLOAD_URL} \
     && rm steampipe.tar.gz
     
 # start the service beforehand for faster startup time
+# and pre install selected plugins
 RUN ./steampipe service start \
-    && ./steampipe service stop
-
-RUN if [ -n "${PRE_INSTALL_PLUGINS}" ]; then ./steampipe plugin install ${PRE_INSTALL_PLUGINS} > /dev/null; fi
+    && ./steampipe service stop \
+    && if [ -n "${PRE_INSTALL_PLUGINS}" ]; then ./steampipe plugin install ${PRE_INSTALL_PLUGINS} > /dev/null; fi
 
 COPY *.sh .
 
