@@ -13,8 +13,7 @@ ENV POWERPIPE_INSTALL_DIR="/home/powerpipe/.powerpipe"
 RUN apt update -y && apt upgrade -y && apt install curl tar unzip -y
 
 RUN groupadd -g 1234 powerpipe && \
-    useradd -m -u 1234 -g powerpipe powerpipe && \
-    chown -R powerpipe:powerpipe /home/powerpipe
+    useradd -m -u 1234 -g powerpipe powerpipe
 
 USER powerpipe
 

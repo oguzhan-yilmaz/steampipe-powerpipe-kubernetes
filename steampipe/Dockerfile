@@ -10,8 +10,7 @@ ENV STEAMPIPE_INSTALL_DIR="/home/powerpipe/.steampipe"
 RUN apt update -y && apt upgrade -y && apt install curl tar unzip -y
 
 RUN groupadd -g 1234 steampipe && \
-    useradd -m -u 1234 -g steampipe steampipe && \
-    chown -R steampipe:steampipe /home/powerpipe
+    useradd -m -u 1234 -g steampipe steampipe
 
 USER steampipe
 
