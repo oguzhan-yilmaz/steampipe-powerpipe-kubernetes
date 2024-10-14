@@ -1,7 +1,12 @@
 global:
-  steampipeDbPassword: "abcd1234"
+  steampipeDatabasePassword: "abcd1234"
 
 powerpipe:
+  secretEnvVars: {}
+
+  envVars:
+    INSTALL_PLUGINS: "steampipe kubernetes aws"
+
   replicaCount: 1
   containerPort: 9033
   image:
@@ -25,14 +30,14 @@ powerpipe:
 
   podAnnotations: {}
 
-  podSecurityContext: {}
-    # fsGroup: 2000
+  podSecurityContext:    
+    fsGroup: 1234
+
 
   securityContext:
     runAsUser: 1234
     runAsGroup: 1234
     runAsNonRoot: true
-
 
   service:
     type: ClusterIP
@@ -75,11 +80,10 @@ powerpipe:
 
 steampipe:
   secretEnvVars:
-    STEAMPIPE_DATABASE_PASSWORD: "abcd1234"
+    SECRET_ENV_VAR: "123"
 
   envVars:
     INSTALL_PLUGINS: "steampipe kubernetes aws"
-
 
   secretConfig:
     KUBECONFIG: 
@@ -94,6 +98,7 @@ steampipe:
         b = ......
 
   config:
+    # will be mounted to ./steampipe/config/ -- file name==key name
     aws.spc: |
       connection "aws_account_a" {
         plugin  = "aws"
@@ -128,15 +133,23 @@ steampipe:
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "main"
-
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: false
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
   imagePullSecrets: []
   nameOverride: "steampipe"
   fullnameOverride: "steampipe"
 
   podAnnotations: {}
 
-  podSecurityContext: {}
-    # fsGroup: 2000
+  podSecurityContext:    
+    fsGroup: 1234
+
 
   securityContext:
     runAsUser: 1234
