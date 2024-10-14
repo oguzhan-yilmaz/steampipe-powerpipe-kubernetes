@@ -1,5 +1,5 @@
 apiVersion: v2
-name: steampipe-powerpipe-kubernetes--helm
+name: steampipe-powerpipe-kubernetes
 description: A Helm chart for deploying turbot's Steampipe and Powerpipe to Kubernetes
 
 # A chart can be either an 'application' or a 'library' chart.
