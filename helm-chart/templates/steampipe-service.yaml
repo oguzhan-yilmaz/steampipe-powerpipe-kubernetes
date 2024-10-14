@@ -8,7 +8,7 @@ spec:
   type: {{ .Values.steampipe.service.type }}
   ports:
     - port: {{ .Values.steampipe.service.port }}
-      targetPort: http
+      targetPort: {{ .Values.steampipe.containerPort }}
       protocol: TCP
       name: http
   selector:

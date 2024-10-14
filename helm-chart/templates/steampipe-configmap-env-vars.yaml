@@ -1,8 +1,12 @@
+{{- $steampipeEnvVars := .Values.steampipe.envVars | default (dict) -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "steampipe.fullname" . }}-cm-env-vars
   labels:
     {{- include "steampipe.labels" . | nindent 4 }}
-data:
-  INSTALL_PLUGINS: "steampipe kubernetes"
+{{- if eq (len $steampipeEnvVars) 0 }}
+data: {}
+{{- else }}
+data: {{ toYaml $steampipeEnvVars | nindent 2 }}
+{{- end }}

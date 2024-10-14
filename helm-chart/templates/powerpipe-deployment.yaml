@@ -41,15 +41,19 @@ spec:
             - name: http
               containerPort: {{ .Values.powerpipe.containerPort }}
               protocol: TCP
-          #livenessProbe:
-          #  exec:
-          #    command:
-          #    - bash
-          #    - ./healthcheck.sh
-          #  initialDelaySeconds: 10
-          #  periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+              - bash
+              - ./healthcheck.sh
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          {{- if .Values.powerpipe.resources }}
           resources:
             {{- toYaml .Values.powerpipe.resources | nindent 12 }}
+          {{- else }}
+          resources: {}
+          {{- end }}
       {{- with .Values.powerpipe.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -38,7 +38,7 @@ spec:
           imagePullPolicy: {{ .Values.steampipe.image.pullPolicy }}
           #command: ["sleep", "3000"]
           ports:
-            - name: http
+            - name: postgres
               containerPort: {{ .Values.steampipe.containerPort }}
               protocol: TCP
           livenessProbe:
@@ -49,31 +49,16 @@ spec:
             initialDelaySeconds: 60
             periodSeconds: 10
             failureThreshold: 6
+          {{- if .Values.steampipe.resources }}
           resources:
             {{- toYaml .Values.steampipe.resources | nindent 12 }}
+          {{- else }}
+          resources: {}
+          {{- end }}
           volumeMounts:
-          - name: steampipe-config-volume
-            mountPath: /app/.steampipe/config/aws.spc
-            subPath: aws.spc
-          - name: steampipe-config-volume
-            mountPath: /app/.steampipe/config/kubernetes.spc
-            subPath: kubernetes.spc
-          - name: steampipe-config-volume
-            mountPath: /app/.steampipe/config/gcp.spc
-            subPath: gcp.spc
+          {{- include "steampipe.containerVolumeMounts" . | indent 12}}
       volumes:
-      - name: steampipe-config-volume
-        configMap:
-          name: {{ include "steampipe.fullname" . }}-config
-          optional: true
-          defaultMode: 0777
-          items:
-            - key: aws.spc
-              path: aws.spc  # same as subPath
-            - key: kubernetes.spc
-              path: kubernetes.spc  # same as subPath
-            - key: gcp.spc
-              path: gcp.spc  # same as subPath
+        {{- include "steampipe.containerVolumes" . | nindent 8}}
       {{- with .Values.steampipe.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

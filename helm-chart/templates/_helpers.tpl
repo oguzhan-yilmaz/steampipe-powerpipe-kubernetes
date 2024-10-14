@@ -1,4 +1,27 @@
 {{/*
+*/}}
+{{- define "steampipe.containerVolumeMounts" -}}
+{{- range $key, $value := .Values.steampipe.config }}
+- name: steampipe-config-volume
+  mountPath: /home/steampipe/.steampipe/config/{{ $key }}
+  subPath: {{ $key }}
+{{- end }}
+{{- end }}
+
+
+{{- define "steampipe.containerVolumes" -}}
+- name: steampipe-config-volume
+  configMap:
+    name: {{ include "steampipe.fullname" . }}-config
+    optional: true
+    items:
+    {{- range $key, $value := .Values.steampipe.config }}
+    - key: {{ $key }}
+      path: {{ $key }}  # same as subPath
+    {{- end }}
+{{- end }}
+
+{{/*
 Expand the name of the chart.
 */}}
 {{- define "powerpipe.name" -}}

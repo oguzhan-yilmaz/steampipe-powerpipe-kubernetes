@@ -1,4 +1,4 @@
-
+{{- $steampipeConfig := .Values.steampipe.config | default (dict) -}}
 # every key: data here will be mounted to ./steampipe/config/* 
 apiVersion: v1
 kind: ConfigMap
@@ -6,32 +6,8 @@ metadata:
   name: {{ include "steampipe.fullname" . }}-config
   labels:
     {{- include "steampipe.labels" . | nindent 4 }}
-data:
-  aws.spc: |
-    connection "aws_account_a" {
-      plugin  = "aws"
-      profile = "account_a"
-      regions = ["us-east-1", "us-west-2"]
-    }
-
-    connection "aws_account_b" {
-      plugin  = "aws"
-      profile = "account_b"
-      regions = ["ap-southeast-1", "ap-southeast-2"]
-    }
-  gcp.spc: |
-    connection "gcp_my_other_project" {
-      plugin      = "gcp"
-      project     = "my-other-project"
-      credentials = "/home/me/my-service-account-creds.json"
-    }
-  kubernetes.spc: |
-    connection "kubernetes" {
-      plugin         = "kubernetes"
-      config_path    = "~/.kube/config"
-      config_context = "myCluster"
-      source_types   = ["deployed"]
-    }
-#   export CLOUDSDK_CORE_PROJECT=myproject
-# export GOOGLE_CLOUD_QUOTA_PROJECT=billingproject
-# export GOOGLE_APPLICATION_CREDENTIALS=/path/to/my/creds.json
+{{- if eq (len $steampipeConfig) 0 }}
+data: {}
+{{- else }}
+data: {{ toYaml $steampipeConfig | nindent 2 }}
+{{- end }}
