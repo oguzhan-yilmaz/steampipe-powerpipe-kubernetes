@@ -37,4 +37,4 @@ jobs:
           PACKAGE_NAME=$(basename "$PACKAGE_OUTPUT")
           echo "Generated helm package: $PACKAGE_NAME"
           echo ${{ secrets.GHCR_TOKEN }} | helm registry login ghcr.io/oguzhan-yilmaz --username oguzhan-yilmaz --password-stdin
-          helm push "$PACKAGE_NAME"" oci://ghcr.io/oguzhan-yilmaz
+          helm push "$PACKAGE_NAME" oci://ghcr.io/oguzhan-yilmaz
