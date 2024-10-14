@@ -7,6 +7,9 @@ on:
   push:
     branches:
       - 'main'
+    paths-ignore:
+      - 'helm-chart/**'
+      - '.github/workflows/helm-package-and-publish.yaml'
 env:
   REGISTRY: ghcr.io
   STEAMPIPE_IMAGE_NAME: ${{ github.repository }}--steampipe
