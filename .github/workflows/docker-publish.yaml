@@ -13,7 +13,7 @@ env:
   POWERPIPE_IMAGE_NAME: ${{ github.repository }}--powerpipe
 
 jobs:
-  build-and-push-balcony-terraform-import-docker-image:
+  build-and-push-steampipe-and-powerpipe-docker-images:
     runs-on: ubuntu-latest
     permissions:
       contents: read

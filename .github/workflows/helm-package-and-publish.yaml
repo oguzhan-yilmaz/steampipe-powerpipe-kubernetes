@@ -15,7 +15,7 @@ env:
   HELM_REPO_NAME: ${{ github.repository }}--helm-chart
 
 jobs:
-  build-and-push-balcony-terraform-import-docker-image:
+  helm-package-and-push-to-ghcr-io:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -33,6 +33,7 @@ jobs:
       - name: Configure functions
         run: |
           PACKAGE_OUTPUT=$(helm package --version 1.0.0 helm-chart)
+          echo "PACKAGE_OUTPUT=$PACKAGE_OUTPUT"
           PACKAGE_NAME=$(basename $PACKAGE_OUTPUT)
           echo "Generated helm package: $PACKAGE_NAME"
           echo ${{ secrets.GHCR_TOKEN }} | helm registry login ghcr.io/oguzhan-yilmaz --username oguzhan-yilmaz --password-stdin
