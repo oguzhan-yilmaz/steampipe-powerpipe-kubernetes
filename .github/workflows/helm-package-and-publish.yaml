@@ -25,10 +25,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # - uses: chrisdickinson/setup-yq@latest
-      
       - name: Install Helm
-        uses: azure/setup-helm@v3
+        uses: azure/setup-helm@v4.2.0
 
       - name: Helm Package and Push to ghcr.io
         run: |
