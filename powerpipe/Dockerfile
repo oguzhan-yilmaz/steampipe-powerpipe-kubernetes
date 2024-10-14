@@ -1,6 +1,8 @@
 FROM debian:bookworm-slim
-ENV DEBIAN_FRONTEND=noninteractive
 
+LABEL org.opencontainers.image.source https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 ARG POWERPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/powerpipe/releases/download/v0.4.4/powerpipe.linux.arm64.tar.gz"
 

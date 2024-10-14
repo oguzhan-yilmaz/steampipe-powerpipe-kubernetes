@@ -1,5 +1,7 @@
 FROM debian:bookworm-slim
 
+LABEL org.opencontainers.image.source https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes
+
 ENV DEBIAN_FRONTEND=noninteractive
 # space separated list of plugins at build time
 ARG PRE_INSTALL_PLUGINS="steampipe kubernetes"
