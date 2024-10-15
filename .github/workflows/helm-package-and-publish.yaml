@@ -92,7 +92,12 @@ jobs:
           ls -al gh-pages-clone
 
           # merge the helm index.yaml
-          helm repo index . --url ${{ steps.helm_package_download_url.outputs.download_url}} --merge gh-pages-clone/index.yaml
+
+          ACTUAL_RELEASE_URL="${{ steps.helm_package_download_url.outputs.download_url}}"
+          RELEASE_BASE_URL=base_url="${ACTUAL_RELEASE_URL%/*}"
+
+          echo "$base_url"
+          helm repo index . --url "$RELEASE_BASE_URL" --merge gh-pages-clone/index.yaml
           ls -al
 
           # replace the index.yaml with the new one
