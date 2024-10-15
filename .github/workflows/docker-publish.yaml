@@ -1,16 +1,16 @@
 name: Build and publish a steampipe and powerpipe images to ghcr.io
 on:
   # publish on releases, e.g. v2.1.13 (image tagged as "2.1.13" - "v" prefix is removed)
-  # release:
-  #   types: [ published ]
+  release:
+    types: [ published ]
 
-  push:
-    branches:
-      - 'main'
-    paths:
-      - 'steampipe/**'
-      - 'powerpipe/**'
-      - '.github/workflows/docker-publish.yaml'
+  # push:
+  #   branches:
+  #     - 'main'
+  #   paths:
+  #     - 'steampipe/**'
+  #     - 'powerpipe/**'
+  #     - '.github/workflows/docker-publish.yaml'
 
 env:
   REGISTRY: ghcr.io
@@ -40,6 +40,8 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images:  ${{ env.REGISTRY }}/${{ env.STEAMPIPE_IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}}
 
       - name: Build and push Docker image -- steampipe
         uses: docker/build-push-action@v4
@@ -56,6 +58,8 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images:  ${{ env.REGISTRY }}/${{ env.POWERPIPE_IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}}
 
       - name: Build and push Docker image -- powerpipe
         uses: docker/build-push-action@v4
