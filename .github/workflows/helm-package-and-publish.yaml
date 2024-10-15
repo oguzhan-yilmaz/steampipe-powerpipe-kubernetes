@@ -115,4 +115,8 @@ jobs:
           pwd
           cat index.yaml
           git status
+          git add index.yaml
+          git commit -m "update index.yaml in Github Action"
           git push
+          git status
+
