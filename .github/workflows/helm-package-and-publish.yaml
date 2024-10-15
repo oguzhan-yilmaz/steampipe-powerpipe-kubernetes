@@ -52,6 +52,7 @@ jobs:
           echo "Generated helm package: $PACKAGE_NAME"
           # save the generated package name to github_output to pass it to next step
           echo "package-name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+          echo "package-version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
       
       - name: Print helm_package step output
         run: |
@@ -72,6 +73,7 @@ jobs:
 
             ```bash
             helm repo add oguzhan-yilmaz https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes
+            helm repo add oguzhan-yilmaz https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes --version ${{ steps.helm_package.outputs.package-name}}
             ```
 
       - name: 'Setup jq'
