@@ -103,3 +103,8 @@ jobs:
         run: |
           git clone -b gh-pages https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes.git gh-pages-clone
           ls -al
+          ls -al gh-pages
+          cd gh-pages
+          pwd
+          helm repo index .. --merge index.yaml
+          cat index.yaml
