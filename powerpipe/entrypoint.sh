@@ -11,7 +11,7 @@ if [ -n "$INSTALL_MODS" ]; then
     done
 fi
 
-echo "Updating Plugins..."
+echo "Updating Mods..."
 ./powerpipe mod update > /dev/null
 
 echo "Mod List:"
