@@ -41,10 +41,11 @@ jobs:
         id: helm_package
         run: |
           echo "Tag version: $GITHUB_REF"
-          RELEASE_TAG="${{ github.event.release.tag_name }}"
-          VERSION="${RELEASE_TAG:-v6.6.6}"
+          RELEASE_TAG="${GITHUB_REF#refs/tags/}"
+          VERSION="${RELEASE_TAG:-v666.666.666}"
+          echo "VERSION Version: $VERSION"
           CLEAN_VERSION="${VERSION#v}"
-          echo "RELEASE Version: $CLEAN_VERSION"
+          echo "CLEAN_VERSION Version: $CLEAN_VERSION"
           PACKAGE_OUTPUT=$(helm package --version "$CLEAN_VERSION" helm-chart)
           echo "PACKAGE_OUTPUT=$PACKAGE_OUTPUT"
           PACKAGE_NAME=$(basename "$PACKAGE_OUTPUT")
