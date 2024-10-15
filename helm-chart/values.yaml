@@ -84,7 +84,7 @@ steampipe:
     repository: ghcr.io/oguzhan-yilmaz/steampipe-powerpipe-kubernetes--steampipe
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "main"
+    tag: "latest"
 
   imagePullSecrets: []
   nameOverride: "steampipe"
@@ -149,7 +149,7 @@ powerpipe:
     repository: ghcr.io/oguzhan-yilmaz/steampipe-powerpipe-kubernetes--powerpipe
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "main"
+    tag: "latest"
 
   imagePullSecrets: []
   nameOverride: "powerpipe"
