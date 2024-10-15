@@ -100,9 +100,11 @@ jobs:
       - name: Clone gh-pages branch
         env:
           GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
-          GIT_AUTHOR_EMAIL: "Oguzhan Yilmaz"
+          GIT_AUTHOR_EMAIL: "Oguzhan Yilmaz(Github Action)"
           GIT_AUTHOR_NAME: "oguzhanylmz271@gmail.com"
         run: |
+          git config --global user.email "$GIT_AUTHOR_EMAIL"
+          git config --global user.name "$GIT_AUTHOR_NAME"
           git clone -b gh-pages https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes.git gh-pages-clone
           ls -al
           ls -al gh-pages-clone
