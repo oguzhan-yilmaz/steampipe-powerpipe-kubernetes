@@ -11,14 +11,4 @@ entries:
     urls:
     - https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes-0.2.28.tgz
     version: 0.2.28
-  - apiVersion: v2
-    appVersion: 1.16.0
-    created: "2024-10-15T14:23:56.355284987Z"
-    description: A Helm chart for deploying turbot's Steampipe and Powerpipe to Kubernetes
-    digest: 7c143cd6ea4caecd56c754ba31a990f6ff4921308a418ef0a8e95a154eb765b6
-    name: steampipe-powerpipe-kubernetes
-    type: application
-    urls:
-    - https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/releases/download/steampipe-powerpipe-kubernetes-0.1.0/steampipe-powerpipe-kubernetes-0.1.0.tgz
-    version: 0.1.0
 generated: "2024-10-15T18:58:31.560110399Z"
