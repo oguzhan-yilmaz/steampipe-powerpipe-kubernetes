@@ -1,25 +1,8 @@
 name: Helm package and push to Github Pages
 on:
-  # publish on releases, e.g. v2.1.13 (image tagged as "2.1.13" - "v" prefix is removed)
-  # release:
-  #   types: [ published ]
-
   push:
     tags:
       - "v*.*.*" 
-
-  #   branches:
-  #     - 'main'
-  #   paths:
-  #     - 'helm-chart/**'
-  #     - '.github/workflows/helm-package-and-publish.yaml'
-
-# TODO: 
-#   - package helm
-#   - upload release artifact
-#   - get its url
-#   - update/merge gh-pages/index.yaml
-
 
 jobs:
   helm-package-and-push-to-ghcr-io:
@@ -29,15 +12,13 @@ jobs:
       packages: write
 
     steps:
-
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Install Helm
         uses: azure/setup-helm@v4.2.0
 
-      - name: Helm Package and Push to ghcr.io
+      - name: Helm Package
         id: helm_package
         run: |
           echo "Tag version: $GITHUB_REF"
@@ -60,7 +41,7 @@ jobs:
         env:
           MESSAGE: ${{ steps.helm_package.outputs.package-name}}
 
-      - name: Release
+      - name: Create new Release and upload helm artifact
         id: create_release_and_upload_artifacts
         uses: softprops/action-gh-release@v2.0.8
         if: startsWith(github.ref, 'refs/tags/')
@@ -95,7 +76,6 @@ jobs:
       - name: Print helm_package download url
         run: |
           echo 'package-name=${{ steps.helm_package_download_url.outputs.download_url}}'
-
 
       - name: Clone gh-pages branch and update helm index.yaml on github pages
         env:
