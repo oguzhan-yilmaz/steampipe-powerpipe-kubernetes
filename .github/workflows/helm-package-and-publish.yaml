@@ -117,6 +117,6 @@ jobs:
           git status
           git add index.yaml
           git commit -m "update index.yaml in Github Action"
+          git remote set-url origin https://x-access-token:${{ secrets.GHCR_TOKEN }}@github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes.git
           git push
           git status
-
