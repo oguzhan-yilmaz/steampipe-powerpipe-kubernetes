@@ -40,6 +40,7 @@ jobs:
       - name: Helm Package and Push to ghcr.io
         id: helm_package
         run: |
+          echo "Tag version: $GITHUB_REF"
           RELEASE_TAG="${{ github.event.release.tag_name }}"
           VERSION="${RELEASE_TAG:-v6.6.6}"
           CLEAN_VERSION="${VERSION#v}"
