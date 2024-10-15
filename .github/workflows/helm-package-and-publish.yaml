@@ -63,4 +63,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: ${{ steps.helm_package.outputs.package-name}}
-
+          token: ${{ secrets.GHCR_TOKEN }}
