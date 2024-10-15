@@ -67,14 +67,22 @@ jobs:
           files: ${{ steps.helm_package.outputs.package-name}}
           token: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Print create_release_and_upload_artifacts step output
-        run: |
-          echo "package-name=$MESSAGE"
-        env:
-          MESSAGE: ${{ steps.create_release_and_upload_artifacts.outputs.package-name}}
+      - name: 'Setup jq'
+        uses: dcarbone/install-jq-action@v2
 
       - name: print release upload output
         run: |
-          echo "assets=$MESSAGE"
+          echo "assets=${{ steps.create_release_and_upload_artifacts.outputs.assets}}"
+          
+      - name: Save artifact download url
+        id: helm_package_download_url
+        run: |
+          DOWNLOAD_URL=$(echo "${{ steps.create_release_and_upload_artifacts.outputs.assets}}" | jq '.[0].browser_download_url')
+          echo "DOWNLOAD_URL=$DOWNLOAD_URL"
+          echo "download_url=$DOWNLOAD_URL" >> $GITHUB_OUTPUT
+
+      - name: Print helm_package download url
+        run: |
+          echo "package-name=$MESSAGE"
         env:
-          MESSAGE: ${{ steps.create_release_and_upload_artifacts.outputs.assets}}
+          MESSAGE: ${{ steps.helm_package_download_url.outputs.download_url}}
