@@ -1,24 +1,52 @@
 {{/*
 */}}
 {{- define "steampipe.containerVolumeMounts" -}}
-{{- range $key, $value := .Values.steampipe.config }}
-- name: steampipe-config-volume
-  mountPath: /home/steampipe/.steampipe/config/{{ $key }}
-  subPath: {{ $key }}
+{{- if or .Values.steampipe.config .Values.steampipe.secretCredentials }}
+volumeMounts:
+  {{- range $key, $value := .Values.steampipe.config }}
+  - name: steampipe-config-volume
+    mountPath: /home/steampipe/.steampipe/config/{{ $key }}
+    subPath: {{ $key }}
+  {{- end }}
+  {{- range $config := .Values.steampipe.secretCredentials }}
+  - name: steampipe-credentials-volume
+    mountPath: /home/steampipe/{{ $config.directory }}/{{ $config.filename }}
+    subPath: {{ $config.filename }}
+  {{- end }}
+{{- else }}
+volumeMounts: []
 {{- end }}
 {{- end }}
 
 
 {{- define "steampipe.containerVolumes" -}}
-- name: steampipe-config-volume
-  configMap:
-    name: {{ include "steampipe.fullname" . }}-config
-    optional: true
-    items:
-    {{- range $key, $value := .Values.steampipe.config }}
-    - key: {{ $key }}
-      path: {{ $key }}  # same as subPath
+{{- if or .Values.steampipe.config .Values.steampipe.secretCredentials }}
+volumes:
+  {{- if or .Values.steampipe.config }}
+  - name: steampipe-config-volume
+    configMap:
+      name: {{ include "steampipe.fullname" . }}-config
+      optional: true
+      items:
+      {{- range $key, $value := .Values.steampipe.config }}
+      - key: {{ $key }}
+        path: {{ $key }}  # same as subPath
+      {{- end }}
     {{- end }}
+  {{- if or .Values.steampipe.secretCredentials }}
+  - name: steampipe-credentials-volume
+    secret:
+      secretName: {{ include "steampipe.fullname" . }}-credentials
+      optional: true
+      items:
+      {{- range $config := .Values.steampipe.secretCredentials }}
+      - key: {{ $config.name }}
+        path: {{ $config.filename }}  # same as subPath
+      {{- end }}
+    {{- end }}
+{{- else }}
+volumes: []
+{{- end }}
 {{- end }}
 
 {{/*
@@ -137,9 +165,5 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the service account to use
 */}}
 {{- define "steampipe.serviceAccountName" -}}
-{{- if .Values.steampipe.serviceAccount.create }}
-{{- default (include "steampipe.fullname" .) .Values.steampipe.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.steampipe.serviceAccount.name }}
-{{- end }}
+default
 {{- end }}
