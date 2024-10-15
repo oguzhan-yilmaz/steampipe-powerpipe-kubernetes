@@ -68,12 +68,14 @@ jobs:
           files: ${{ steps.helm_package.outputs.package-name}}
           token: ${{ secrets.GHCR_TOKEN }}
           generate_release_notes: true
+          fail_on_unmatched_files: true
+          # TODO: update release body
           body: |
             <https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/>
 
             ```bash
             helm repo add oguzhan-yilmaz https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes
-            helm repo add oguzhan-yilmaz https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes --version ${{ steps.helm_package.outputs.package-name}}
+            helm repo add oguzhan-yilmaz https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes --version ${{ steps.helm_package.outputs.package-version}}
             ```
 
       - name: 'Setup jq'
@@ -94,3 +96,10 @@ jobs:
         run: |
           echo 'package-name=${{ steps.helm_package_download_url.outputs.download_url}}'
 
+
+      - name: Clone gh-pages branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
+        run: |
+          git clone -b gh-pages https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes.git gh-pages-clone
+          ls -al
