@@ -92,7 +92,7 @@ jobs:
           ls -al gh-pages-clone
 
           # merge the helm index.yaml
-          helm repo index . --url https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/ --merge gh-pages-clone/index.yaml
+          helm repo index . --url ${{ steps.helm_package_download_url.outputs.download_url}} --merge gh-pages-clone/index.yaml
           ls -al
 
           # replace the index.yaml with the new one
