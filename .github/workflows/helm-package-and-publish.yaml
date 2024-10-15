@@ -1,10 +1,13 @@
 name: Helm package and push to ghcr.io
 on:
   # publish on releases, e.g. v2.1.13 (image tagged as "2.1.13" - "v" prefix is removed)
-  release:
-    types: [ published ]
+  # release:
+  #   types: [ published ]
 
-  # push:
+  push:
+    tags:
+      - "v*.*.*" 
+
   #   branches:
   #     - 'main'
   #   paths:
@@ -26,8 +29,10 @@ jobs:
       packages: write
 
     steps:
+
+
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Helm
         uses: azure/setup-helm@v4.2.0
@@ -53,13 +58,9 @@ jobs:
         env:
           MESSAGE: ${{ steps.helm_package.outputs.package-name}}
 
-      - uses: actions/upload-artifact@v4
+      - name: Release
+        uses: softprops/action-gh-release@v2.0.8
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          # Name of the artifact to upload.
-          # Optional. Default is 'artifact'
-          name: ${{ steps.helm_package.outputs.package-name}}
-          # A file, directory or wildcard pattern that describes what to upload
-          # Required.
-          path: ${{ steps.helm_package.outputs.package-name}}
-          if-no-files-found: error
+          files: ${{ steps.helm_package.outputs.package-name}}
 
