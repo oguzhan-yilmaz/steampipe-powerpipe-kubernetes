@@ -97,26 +97,35 @@ jobs:
           echo 'package-name=${{ steps.helm_package_download_url.outputs.download_url}}'
 
 
-      - name: Clone gh-pages branch
+      - name: Clone gh-pages branch and update helm index.yaml on github pages
         env:
           GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
-          GIT_AUTHOR_EMAIL: "Oguzhan Yilmaz"
+          GIT_AUTHOR_EMAIL: "Oguzhan Yilmaz(Github Action)"
           GIT_AUTHOR_NAME: "oguzhanylmz271@gmail.com"
         run: |
-          git config --global user.email "oguzhanylmz271@gmail.com"
-          git config --global user.name "Oguzhan Yilmaz"
+          # clone gh-pages branch
           git clone -b gh-pages https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes.git gh-pages-clone
           ls -al
           ls -al gh-pages-clone
 
+          # merge the helm index.yaml
           helm repo index . --url https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/ --merge gh-pages-clone/index.yaml
           ls -al
+
+          # replace the index.yaml with the new one
+          echo "Old index.yaml"
+          cat gh-pages-clone/index.yaml
           rm gh-pages-clone/index.yaml
           cp index.yaml gh-pages-clone/index.yaml
+          
+          # check out the new index.yaml
           cd gh-pages-clone
           pwd
+          echo "New index.yaml"
           cat index.yaml
           git status
+
+          # commit and push the new index.yaml
           git add index.yaml
           git commit -m "update index.yaml in Github Action"
           git remote set-url origin https://x-access-token:${{ secrets.GHCR_TOKEN }}@github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes.git
