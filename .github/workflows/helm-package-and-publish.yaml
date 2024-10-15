@@ -12,7 +12,6 @@ on:
   #     - '.github/workflows/helm-package-and-publish.yaml'
 env:
   REGISTRY: ghcr.io
-  HELM_REPO_NAME: ${{ github.repository }}--helm-chart
 
 jobs:
   helm-package-and-push-to-ghcr-io:
@@ -30,10 +29,12 @@ jobs:
 
       - name: Helm Package and Push to ghcr.io
         run: |
-          echo "RELEASE Tag: ${{ github.event.release.tag_name }}"
-          # PACKAGE_OUTPUT=$(helm package --version 1.0.0 helm-chart)
-          # echo "PACKAGE_OUTPUT=$PACKAGE_OUTPUT"
-          # PACKAGE_NAME=$(basename "$PACKAGE_OUTPUT")
-          # echo "Generated helm package: $PACKAGE_NAME"
-          # echo ${{ secrets.GHCR_TOKEN }} | helm registry login ghcr.io/oguzhan-yilmaz/steampipe-powerpipe-kubernetes --username oguzhan-yilmaz --password-stdin
-          # helm push "$PACKAGE_NAME" oci://ghcr.io/oguzhan-yilmaz
+          RELEASE_TAG="${{ github.event.release.tag_name }}"
+          CLEAN_VERSION="${RELEASE_TAG#v}"
+          echo "RELEASE Version: $CLEAN_VERSION"
+          PACKAGE_OUTPUT=$(helm package --version "$CLEAN_VERSION" helm-chart)
+          echo "PACKAGE_OUTPUT=$PACKAGE_OUTPUT"
+          PACKAGE_NAME=$(basename "$PACKAGE_OUTPUT")
+          echo "Generated helm package: $PACKAGE_NAME"
+          echo ${{ secrets.GHCR_TOKEN }} | helm registry login ghcr.io/oguzhan-yilmaz/steampipe-powerpipe-kubernetes --username oguzhan-yilmaz --password-stdin
+          helm push "$PACKAGE_NAME" oci://ghcr.io/oguzhan-yilmaz
