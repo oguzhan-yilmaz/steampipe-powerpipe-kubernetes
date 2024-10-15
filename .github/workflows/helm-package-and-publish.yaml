@@ -101,8 +101,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
         run: |
-          git config --global user.email "oguzhanylmz271@gmail.com"
-          git config --global user.name "Oguzhan Yilmaz"
+          git config --local user.email "oguzhanylmz271@gmail.com"
+          git config --local user.name "Oguzhan Yilmaz"
           git clone -b gh-pages https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes.git gh-pages-clone
           ls -al
           ls -al gh-pages-clone
