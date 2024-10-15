@@ -1,4 +1,4 @@
-name: Helm package and push to ghcr.io
+name: Helm package and push to Github Pages
 on:
   # publish on releases, e.g. v2.1.13 (image tagged as "2.1.13" - "v" prefix is removed)
   release:
@@ -10,31 +10,34 @@ on:
   #   paths:
   #     - 'helm-chart/**'
   #     - '.github/workflows/helm-package-and-publish.yaml'
-env:
-  REGISTRY: ghcr.io
-
+  # ${{ github.event.release.tag_name }}
 jobs:
-  helm-package-and-push-to-ghcr-io:
-    runs-on: ubuntu-latest
+  release:
+    # depending on default permission settings for your org (contents being read-only or read-write for workloads), you will have to add permissions
+    # see: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
     permissions:
-      contents: read
-      packages: write
-
+      contents: write
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: Install Helm
-        uses: azure/setup-helm@v4.2.0
+        uses: azure/setup-helm@v4
+        env:
+          GITHUB_TOKEN: "${{ secrets.GHCR_TOKEN }}"
 
-      - name: Helm Package and Push to ghcr.io
-        run: |
-          RELEASE_TAG="${{ github.event.release.tag_name }}"
-          CLEAN_VERSION="${RELEASE_TAG#v}"
-          echo "RELEASE Version: $CLEAN_VERSION"
-          PACKAGE_OUTPUT=$(helm package --version "$CLEAN_VERSION" helm-chart)
-          echo "PACKAGE_OUTPUT=$PACKAGE_OUTPUT"
-          PACKAGE_NAME=$(basename "$PACKAGE_OUTPUT")
-          echo "Generated helm package: $PACKAGE_NAME"
-          echo ${{ secrets.GHCR_TOKEN }} | helm registry login ghcr.io/oguzhan-yilmaz/steampipe-powerpipe-kubernetes --username oguzhan-yilmaz --password-stdin
-          helm push "$PACKAGE_NAME" oci://ghcr.io/oguzhan-yilmaz
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.6.0
+        with:
+          charts_dir: helm-chart
+          config: cr.yaml
+        env:
+          CR_TOKEN: "${{ secrets.GHCR_TOKEN }}"
