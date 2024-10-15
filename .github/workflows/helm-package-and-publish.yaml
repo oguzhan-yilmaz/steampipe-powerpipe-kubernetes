@@ -52,11 +52,38 @@ jobs:
           fail_on_unmatched_files: true
           # TODO: update release body
           body: |
-            <https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/>
+            Github Repo: <https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes>
+            Github Releases: <https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/releases>
+            Github Pages: <https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/>
+            Github Pages (Helm index): <https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/index.yaml>
+            
+            **Helm Repo**
 
             ```bash
-            helm repo add oguzhan-yilmaz https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes
-            helm repo add oguzhan-yilmaz https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes --version ${{ steps.helm_package.outputs.package-version}}
+            helm repo add oguzhan-yilmaz https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes 
+            ```
+
+            ```bash
+            helm repo update oguzhan-yilmaz
+            ```
+            
+            **Helm Install (latest version)**
+
+            ```bash
+            helm upgrade --install steampipe-powerpipe \
+              -n turbot \
+              --create-namespace \
+              oguzhan-yilmaz/steampipe-powerpipe-kubernetes
+            ```
+            
+            **Helm Install (current version)**
+
+            ```bash
+            helm upgrade --install steampipe-powerpipe \
+              -n turbot \
+              --create-namespace \
+              --version ${{ steps.helm_package.outputs.package-version}} \
+              oguzhan-yilmaz/steampipe-powerpipe-kubernetes
             ```
 
       - name: 'Setup jq'
