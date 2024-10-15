@@ -66,6 +66,13 @@ jobs:
         with:
           files: ${{ steps.helm_package.outputs.package-name}}
           token: ${{ secrets.GHCR_TOKEN }}
+          generate_release_notes: true
+          body: |
+            <https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/>
+
+            ```bash
+            helm repo add oguzhan-yilmaz https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes
+            ```
 
       - name: 'Setup jq'
         uses: dcarbone/install-jq-action@v2
@@ -83,6 +90,5 @@ jobs:
 
       - name: Print helm_package download url
         run: |
-          echo "package-name=$MESSAGE"
-        env:
-          MESSAGE: ${{ steps.helm_package_download_url.outputs.download_url}}
+          echo 'package-name=${{ steps.helm_package_download_url.outputs.download_url}}'
+
