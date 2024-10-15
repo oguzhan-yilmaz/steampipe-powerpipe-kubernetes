@@ -112,5 +112,5 @@ jobs:
           cd gh-pages-clone
           pwd
           cat index.yaml
-          git push origin/gh-pages
-          
+          git status
+          git push
