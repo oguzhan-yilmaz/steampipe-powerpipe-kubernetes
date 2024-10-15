@@ -1,4 +1,6 @@
 secret
 *.tgz
-todo.md
 helm-chart/test.yaml
+helm-chart/templates/test.yaml
+todo.md
+helm-chart/secret-values.yaml
