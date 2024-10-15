@@ -4,7 +4,10 @@ echo "Running entrypoint.sh script..."
 
 if [ -n "$INSTALL_PLUGINS" ]; then
     echo "Installing Plugins: $INSTALL_PLUGINS"
-    ./steampipe plugin install "$INSTALL_PLUGINS" > /dev/null
+    for mod in $INSTALL_PLUGINS; do
+        echo "Installing Plugin: $mod"
+        ./steampipe plugin install "$mod" > /dev/null
+    done
 fi
 
 echo "Updating Plugins..."
