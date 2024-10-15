@@ -18,6 +18,9 @@ services:
       retries: 10
       start_period: 20s
       timeout: 5s
+    # volumes:
+    #   - ~/.kube/config:/home/steampipe/.kube/config  # mount kubeconfig
+    #   - ~/.aws/credentials:/home/steampipe/.aws/credentials  # mount aws credentials
 
   powerpipe:
     build:
