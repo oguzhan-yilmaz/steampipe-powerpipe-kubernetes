@@ -106,7 +106,10 @@ jobs:
           ls -al gh-pages-clone
 
           helm repo index . --url https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/ --merge gh-pages-clone/index.yaml
-
-          cd gh-pages-clone
-          pwd
+          ls -al
           cat index.yaml
+
+          # cd gh-pages-clone
+          # pwd
+          # cat index.yaml
+          # cd ..
