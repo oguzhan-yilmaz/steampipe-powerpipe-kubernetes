@@ -77,7 +77,7 @@ jobs:
       - name: Save artifact download url
         id: helm_package_download_url
         run: |
-          DOWNLOAD_URL=$(echo "${{ steps.create_release_and_upload_artifacts.outputs.assets}}" | jq '.[0].browser_download_url')
+          DOWNLOAD_URL=$(echo '${{ steps.create_release_and_upload_artifacts.outputs.assets}}' | jq '.[0].browser_download_url')
           echo "DOWNLOAD_URL=$DOWNLOAD_URL"
           echo "download_url=$DOWNLOAD_URL" >> $GITHUB_OUTPUT
 
