@@ -37,7 +37,6 @@ jobs:
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
         with:
-          charts_dir: helm-chart
-          config: cr.yaml
+          charts_dir: helm-chart/
         env:
           CR_TOKEN: "${{ secrets.GHCR_TOKEN }}"
