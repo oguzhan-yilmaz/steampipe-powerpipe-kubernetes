@@ -1,4 +1,3 @@
-{{- $steampipeConfig := .Values.steampipe.config | default (dict) -}}
 # every key: data here will be mounted to ./steampipe/config/* 
 apiVersion: v1
 kind: ConfigMap
@@ -6,8 +5,8 @@ metadata:
   name: {{ include "steampipe.fullname" . }}-config
   labels:
     {{- include "steampipe.labels" . | nindent 4 }}
-{{- if eq (len $steampipeConfig) 0 }}
+{{- if eq (len (.Values.steampipe.config | default (dict))) 0 }}
 data: {}
 {{- else }}
-data: {{ toYaml $steampipeConfig | nindent 2 }}
+data: {{ toYaml .Values.steampipe.config | nindent 2 }}
 {{- end }}

@@ -1,11 +1,147 @@
 global:
-  steampipeDatabasePassword: "abcd1234"
+  # steampipeDatabasePassword will be used to set the Steampipe DB password
+  # and powerpipe DB Connection URL will get this value from here 
+  steampipeDatabasePassword: "1pjVZE4bYBkIGWpNTOgl"
+
+  # Enable to have Read Only access to the deployed cluster
+  steampipeCreateReadOnlyServiceAccount: true
+
+
+steampipe:
+  # Additional Secret Env Vars for steampipe
+  secretEnvVars: {}
+
+  # Define non-secret Env Vars for steampipe
+  envVars:
+    # INSTALL_PLUGINS will install steampipe plugins at runtime.
+    #   Note: INSTALL_PLUGINS env. var. should be space separated
+    # Take look at available plugins: https://hub.steampipe.io/
+    # INSTALL_PLUGINS: "steampipe kubernetes aws"
+
+    # following yaml syntax (>) will merge newlines with spaces
+    INSTALL_PLUGINS: >
+      steampipe
+      kubernetes
+      aws
+    
+    # set the default aws profile if you are passing aws credentials, or use .spc files
+    AWS_PROFILE: "default" 
+
+
+  # secretCredentials will create Secret and
+  # will put the file content to  '~/{directory}/{filename}'
+  # useful for passing aws, gcp, kubeconfig credentials
+  secretCredentials:
+    - name: kubeconfig  
+      directory: ".kube"
+      filename: "config"
+      content: |
+        example kubeconfig
+    - name: aws-credentials
+      filename: credentials
+      directory: ".aws"
+      content: |
+        [default]
+        aws_access_key_id = AKIA6.........
+        aws_secret_access_key = vBXPp..................
+        region = eu-west-1
+
+
+  # .config is used to create a ConfigMap
+  # and will be mounted to ~/.steampipe/config/{key} — the filename being the key  
+  # use it to configure steampipe: https://steampipe.io/docs/reference/config-files/overview
+  config:
+    # aws.spc: |
+    #   connection "aws_account_a" {
+    #     plugin  = "aws"
+    #     profile = "default"
+    #     regions = ["us-*", "eu-*"]
+    #   }
+
+    #   connection "aws_account_b" {
+    #     plugin  = "aws"
+    #     profile = "another_profile"
+    #     regions = ["ap-southeast-1", "ap-southeast-2"]
+    #   }
+    gcp.spc: |
+      connection "gcp_my_other_project" {
+        plugin      = "gcp"
+        project     = "my-other-project"
+        credentials = "/home/me/my-service-account-creds.json"
+      }
+    kubernetes.spc: |
+      connection "kubernetes" {
+        plugin         = "kubernetes"
+        config_path    = "~/.kube/config"
+        config_context = "myCluster"
+        source_types   = ["deployed"]
+      }
+
+
+  replicaCount: 1
+  containerPort: 9193
+  image:
+    repository: ghcr.io/oguzhan-yilmaz/steampipe-powerpipe-kubernetes--steampipe
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "main"
+
+  imagePullSecrets: []
+  nameOverride: "steampipe"
+  fullnameOverride: "steampipe"
+
+  podAnnotations: {}
+
+  podSecurityContext:    
+    fsGroup: 1234
+
+  securityContext:
+    runAsUser: 1234
+    runAsGroup: 1234
+    runAsNonRoot: true
+
+  service:
+    type: ClusterIP
+    port: 9193
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+
+
+
 
 powerpipe:
+  # Additional Secret Env variables for powerpipe
   secretEnvVars: {}
 
   envVars:
-    INSTALL_PLUGINS: "steampipe kubernetes aws"
+    # INSTALL_MODS will install Powerpipe modes at runtime
+    #   Note: INSTALL_MODS should be space separated
+    # Take look at available mods: https://hub.powerpipe.io/ 
+    
+    # INSTALL_MODS: "github.com/turbot/steampipe-mod-aws-insights github.com/turbot/steampipe-mod-aws-thrifty github.com/turbot/steampipe-mod-aws-top-10"
+    
+    # following yaml syntax (>) will merge newlines with spaces
+    INSTALL_MODS: >
+      github.com/turbot/steampipe-mod-aws-insights
+      github.com/turbot/steampipe-mod-aws-thrifty
+      github.com/turbot/steampipe-mod-aws-top-10
 
   replicaCount: 1
   containerPort: 9033
@@ -18,15 +154,6 @@ powerpipe:
   imagePullSecrets: []
   nameOverride: "powerpipe"
   fullnameOverride: "powerpipe"
-
-  serviceAccount:
-    # Specifies whether a service account should be created
-    create: true
-    # Annotations to add to the service account
-    annotations: {}
-    # The name of the service account to use.
-    # If not set and create is true, a name is generated using the fullname template
-    name: ""
 
   podAnnotations: {}
 
@@ -58,107 +185,6 @@ powerpipe:
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
-
-  resources: {}
-    # We usually recommend not to specify default resources and to leave this as a conscious
-    # choice for the user. This also increases chances charts run on environments with little
-    # resources, such as Minikube. If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
-
-  nodeSelector: {}
-
-  tolerations: []
-
-  affinity: {}
-
-
-steampipe:
-  secretEnvVars:
-    SECRET_ENV_VAR: "123"
-
-  envVars:
-    INSTALL_PLUGINS: "steampipe kubernetes aws"
-
-  secretConfig:
-    KUBECONFIG: 
-      path: ""
-      content: |
-        example kubeconfig
-    AWS_CREDENTIALS: 
-      path: ""
-      content: |
-        [profile default]
-        a = ......
-        b = ......
-
-  config:
-    # will be mounted to ./steampipe/config/ -- file name==key name
-    aws.spc: |
-      connection "aws_account_a" {
-        plugin  = "aws"
-        profile = "account_a"
-        regions = ["us-east-1", "us-west-2"]
-      }
-
-      connection "aws_account_b" {
-        plugin  = "aws"
-        profile = "account_b"
-        regions = ["ap-southeast-1", "ap-southeast-2"]
-      }
-    gcp.spc: |
-      connection "gcp_my_other_project" {
-        plugin      = "gcp"
-        project     = "my-other-project"
-        credentials = "/home/me/my-service-account-creds.json"
-      }
-    kubernetes.spc: |
-      connection "kubernetes" {
-        plugin         = "kubernetes"
-        config_path    = "~/.kube/config"
-        config_context = "myCluster"
-        source_types   = ["deployed"]
-      }
-
-
-  replicaCount: 1
-  containerPort: 9193
-  image:
-    repository: ghcr.io/oguzhan-yilmaz/steampipe-powerpipe-kubernetes--steampipe
-    pullPolicy: Always
-    # Overrides the image tag whose default is the chart appVersion.
-    tag: "main"
-  serviceAccount:
-    # Specifies whether a service account should be created
-    create: false
-    # Annotations to add to the service account
-    annotations: {}
-    # The name of the service account to use.
-    # If not set and create is true, a name is generated using the fullname template
-    name: ""
-  imagePullSecrets: []
-  nameOverride: "steampipe"
-  fullnameOverride: "steampipe"
-
-  podAnnotations: {}
-
-  podSecurityContext:    
-    fsGroup: 1234
-
-
-  securityContext:
-    runAsUser: 1234
-    runAsGroup: 1234
-    runAsNonRoot: true
-
-  service:
-    type: ClusterIP
-    port: 9193
 
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious

@@ -22,6 +22,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      automountServiceAccountToken: true
       serviceAccountName: {{ include "steampipe.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.steampipe.podSecurityContext | nindent 8 }}
@@ -55,10 +56,8 @@ spec:
           {{- else }}
           resources: {}
           {{- end }}
-          volumeMounts:
-          {{- include "steampipe.containerVolumeMounts" . | indent 12}}
-      volumes:
-        {{- include "steampipe.containerVolumes" . | nindent 8}}
+          {{- include "steampipe.containerVolumeMounts" . | indent 10}}
+      {{- include "steampipe.containerVolumes" . | indent 6}}
       {{- with .Values.steampipe.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

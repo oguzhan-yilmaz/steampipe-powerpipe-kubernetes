@@ -1,12 +1,11 @@
-{{- $powerpipeEnvVars := .Values.powerpipe.envVars | default (dict) -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "powerpipe.fullname" . }}-cm-env-vars
   labels:
     {{- include "powerpipe.labels" . | nindent 4 }}
-{{- if eq (len $powerpipeEnvVars) 0 }}
+{{- if eq (len (.Values.powerpipe.envVars | default (dict))) 0 }}
 data: {}
 {{- else }}
-data: {{ toYaml $powerpipeEnvVars | nindent 2 }}
+data: {{ toYaml .Values.powerpipe.envVars | nindent 2 }}
 {{- end }}
