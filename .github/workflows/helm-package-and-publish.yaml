@@ -15,20 +15,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Install Helm
-        uses: azure/setup-helm@v4.2.0
       
-      
-      - name: Install YQ
+      - name: Install Helm + yq + jq
         run: |
           sudo snap install yq
-      
-      # - name: Install YQ
-      #   uses: dcarbone/install-yq-action@v1.1.1
-            
-      - name: 'Setup jq'
-        uses: dcarbone/install-jq-action@v2
+          sudo snap install helm --classic
+          sudo snap install jq
 
       - name: Helm Package
         id: helm_package
