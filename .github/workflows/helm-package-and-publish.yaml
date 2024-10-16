@@ -119,10 +119,10 @@ jobs:
 
             **ArgoCD Application (current version)**
 
-            First, download the `argocd-application.yaml` from assets.
+            First, download the `argocd-application-X.Y.Z.yaml` from assets.
 
             ```bash
-            kubectl apply -f argocd-application.yaml
+            kubectl apply -f argocd-application-X.Y.Z.yaml
             ```
 
       - name: print release upload output
