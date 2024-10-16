@@ -22,35 +22,34 @@ steampipe:
     INSTALL_PLUGINS: >
       steampipe
       kubernetes
-      aws
     
     # set the default aws profile if you are passing aws credentials, or use .spc files
-    AWS_PROFILE: "default" 
+    # AWS_PROFILE: "default" 
 
 
   # secretCredentials will create Secret and
   # will put the file content to  '~/{directory}/{filename}'
   # useful for passing aws, gcp, kubeconfig credentials
-  secretCredentials:
-    - name: kubeconfig  
-      directory: ".kube"
-      filename: "config"
-      content: |
-        example kubeconfig
-    - name: aws-credentials
-      filename: credentials
-      directory: ".aws"
-      content: |
-        [default]
-        aws_access_key_id = AKIA6.........
-        aws_secret_access_key = vBXPp..................
-        region = eu-west-1
+  secretCredentials: {}
+    # - name: kubeconfig  
+    #   directory: ".kube"
+    #   filename: "config"
+    #   content: |
+    #     example kubeconfig
+    # - name: aws-credentials
+    #   filename: credentials
+    #   directory: ".aws"
+    #   content: |
+    #     [default]
+    #     aws_access_key_id = AKIA6.........
+    #     aws_secret_access_key = vBXPp..................
+    #     region = eu-west-1
 
 
   # .config is used to create a ConfigMap
   # and will be mounted to ~/.steampipe/config/{key} — the filename being the key  
   # use it to configure steampipe: https://steampipe.io/docs/reference/config-files/overview
-  config:
+  config: {}
     # aws.spc: |
     #   connection "aws_account_a" {
     #     plugin  = "aws"
@@ -63,19 +62,19 @@ steampipe:
     #     profile = "another_profile"
     #     regions = ["ap-southeast-1", "ap-southeast-2"]
     #   }
-    gcp.spc: |
-      connection "gcp_my_other_project" {
-        plugin      = "gcp"
-        project     = "my-other-project"
-        credentials = "/home/me/my-service-account-creds.json"
-      }
-    kubernetes.spc: |
-      connection "kubernetes" {
-        plugin         = "kubernetes"
-        config_path    = "~/.kube/config"
-        config_context = "myCluster"
-        source_types   = ["deployed"]
-      }
+    # gcp.spc: |
+    #   connection "gcp_my_other_project" {
+    #     plugin      = "gcp"
+    #     project     = "my-other-project"
+    #     credentials = "/home/me/my-service-account-creds.json"
+    #   }
+    # kubernetes.spc: |
+    #   connection "kubernetes" {
+    #     plugin         = "kubernetes"
+    #     config_path    = "~/.kube/config"
+    #     config_context = "myCluster"
+    #     source_types   = ["deployed"]
+    #   }
 
 
   replicaCount: 1
@@ -139,9 +138,8 @@ powerpipe:
     
     # following yaml syntax (>) will merge newlines with spaces
     INSTALL_MODS: >
-      github.com/turbot/steampipe-mod-aws-insights
-      github.com/turbot/steampipe-mod-aws-thrifty
-      github.com/turbot/steampipe-mod-aws-top-10
+      github.com/turbot/steampipe-mod-kubernetes-insights
+      github.com/turbot/steampipe-mod-kubernetes-compliance
 
   replicaCount: 1
   containerPort: 9033
