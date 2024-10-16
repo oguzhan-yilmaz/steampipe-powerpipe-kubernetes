@@ -18,9 +18,15 @@ jobs:
 
       - name: Install Helm
         uses: azure/setup-helm@v4.2.0
-
-      - uses: chrisdickinson/setup-yq@latest
-
+      
+      
+      - name: Install YQ
+        run: |
+          snap install yq
+      
+      # - name: Install YQ
+      #   uses: dcarbone/install-yq-action@v1.1.1
+            
       - name: 'Setup jq'
         uses: dcarbone/install-jq-action@v2
 
