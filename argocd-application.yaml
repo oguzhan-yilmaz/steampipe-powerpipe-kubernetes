@@ -1,0 +1,77 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: steampipe-powerpipe
+  namespace: argocd
+  # finalizers:
+  #   - resources-finalizer.argocd.argoproj.io
+  labels:
+    name: steampipe-powerpipe
+
+spec:
+  project: default
+
+  source:
+    repoURL: https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/
+    targetRevision: '*.*.*' 
+
+
+    chart: steampipe-powerpipe-kubernetes
+    helm:
+      releaseName: steampipe-powerpipe
+
+      # # Values file as block file. This takes precedence over values
+      # valuesObject:
+      #   ingress:
+      #     enabled: true
+      #     path: /
+      #     hosts:
+      #       - mydomain.example.com
+      #     annotations:
+      #       kubernetes.io/ingress.class: nginx
+      #       kubernetes.io/tls-acme: "true"
+      #     labels: {}
+      #     tls:
+      #       - secretName: mydomain-tls
+      #         hosts:
+      #           - mydomain.example.com
+
+      # # Values file as block file. Prefer to use valuesObject if possible (see below)
+      # values: |
+      #   ingress:
+      #     enabled: true
+      #     path: /
+      #     hosts:
+      #       - mydomain.example.com
+      #     annotations:
+      #       kubernetes.io/ingress.class: nginx
+      #       kubernetes.io/tls-acme: "true"
+      #     labels: {}
+      #     tls:
+      #       - secretName: mydomain-tls
+      #         hosts:
+      #           - mydomain.example.com
+
+  # Destination cluster and namespace to deploy the application
+  destination:
+    name: in-cluster
+    namespace: turbot
+
+  # Extra information to show in the Argo CD Application details tab
+  info:
+    - name: 'Github Repo'
+      value: 'https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes'
+
+  # Sync policy
+  syncPolicy:
+    automated: # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.
+      prune: true # Specifies if resources should be pruned during auto-syncing ( false by default ).
+      selfHeal: true # Specifies if partial app sync should be executed when resources are changed only in target Kubernetes cluster and no git change detected ( false by default ).
+    syncOptions:     # Sync options which modifies sync behavior
+    - Validate=false # disables resource validation (equivalent to 'kubectl apply --validate=false') ( true by default ).
+    - CreateNamespace=true # Namespace Auto-Creation ensures that namespace specified as the application destination exists in the destination cluster.
+    - PrunePropagationPolicy=foreground # Supported policies are background, foreground and orphan.
+    - PruneLast=true # Allow the ability for resource pruning to happen as a final, implicit wave of a sync operation
+    - ApplyOutOfSyncOnly=true # Only sync out-of-sync resources, rather than applying every object in the application
+
+  revisionHistoryLimit: 5
