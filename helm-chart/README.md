@@ -27,7 +27,7 @@ helm upgrade --install steampipe-powerpipe \
 ### Helm Install (specific version)
 
 ```bash
-helm show values oguzhan-yilmaz/steampipe-powerpipe-kubernetes --version X.Y.Z> steampipe-powerpipe-values.yaml
+helm show values oguzhan-yilmaz/steampipe-powerpipe-kubernetes --version X.Y.Z > steampipe-powerpipe-values.yaml
 
 # update the steampipe-powerpipe-values.yaml on your own accord
 
