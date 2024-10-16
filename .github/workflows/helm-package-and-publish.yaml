@@ -45,11 +45,13 @@ jobs:
       - name: Patch argocd application yaml
         id: argocd-application
         run: |
-          echo "Current targetRevision: $(yq '.spec.source.targetRevision' argocd-application.yaml)"
-          yq e '.spec.source.targetRevision = "${{ steps.helm_package.outputs.package-version}}"' --inplace argocd-application.yaml
-          echo "Updated targetRevision: $(yq '.spec.source.targetRevision' argocd-application.yaml)"
+          VERSIONED_ARGOCD_APP_YAML="argocd-application-${{ steps.helm_package.outputs.package-version}}.yaml"
+          cp argocd-application.yaml "$VERSIONED_ARGOCD_APP_YAML"
+          echo "Current targetRevision: $(yq '.spec.source.targetRevision' $VERSIONED_ARGOCD_APP_YAML)"
+          yq e '.spec.source.targetRevision = "${{ steps.helm_package.outputs.package-version}}"' --inplace $VERSIONED_ARGOCD_APP_YAML
+          echo "Patched targetRevision: $(yq '.spec.source.targetRevision' $VERSIONED_ARGOCD_APP_YAML)"
           # save to the github_output to pass it to next step
-          echo "argocd-application-filename=argocd-application.yaml" >> $GITHUB_OUTPUT
+          echo "argocd-application-filename=$VERSIONED_ARGOCD_APP_YAML" >> $GITHUB_OUTPUT
       
       - name: Print helm_package step output
         run: |
