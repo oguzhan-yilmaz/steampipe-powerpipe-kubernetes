@@ -16,5 +16,8 @@ echo "Updating Plugins..."
 echo "Steampipe Plugins:"
 ./steampipe plugin list
 
+# run the initdb.sh in a sub-shell to not block the steampipe service start
+(bash init-db.sh) &
+
 echo "Starting Steampipe:"
 ./steampipe service start --foreground
