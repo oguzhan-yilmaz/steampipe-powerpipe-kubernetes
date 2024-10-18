@@ -25,7 +25,7 @@ services:
       timeout: 5s
     volumes:
       - ~/.kube/config:/home/steampipe/.kube/config  # mount kubeconfig
-      - ./steampipe/init-db.sql:/home/steampipe/init-db-sql/custom-functions.sql
+      - ./steampipe/init-db.sql:/home/steampipe/initdb-sql-scripts/custom-functions.sql
     #   - ~/.aws/credentials:/home/steampipe/.aws/credentials  # mount aws credentials
 
   powerpipe:

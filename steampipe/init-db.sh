@@ -1,9 +1,9 @@
 #!/bin/bash
 
-SQL_DIR="/home/steampipe/init-db-sql"
+SQL_DIR="/home/steampipe/initdb-sql-scripts"
 if ls "$SQL_DIR"/*.sql 1> /dev/null 2>&1; then
     # Check if the directory exists
-    echo "[init-db.sh] Starting DB Initialization as there are .sql scripts in ~/init-db-sql directory"
+    echo "[init-db.sh] Starting DB Initialization as there are .sql scripts in ~/initdb-sql-scripts directory"
 
     while true; do  # Loop until the exit code of healthcheck.sh is 0
         bash healthcheck.sh > /dev/null
@@ -26,5 +26,5 @@ if ls "$SQL_DIR"/*.sql 1> /dev/null 2>&1; then
             fi
         done
 else
-    echo "[init-db.sh] Skipping Db Initialization as $SQL_DIR directory does not exist."
+    echo "[init-db.sh] Skipping Db Initialization as $SQL_DIR directory does not have .sql scripts."
 fi
