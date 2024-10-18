@@ -52,7 +52,7 @@ volumes:
   {{- if or .Values.steampipe.initDbSqlScripts }}
   - name: steampipe-initdb-volume
     configMap:
-      name: {{ include "steampipe.fullname" . }}-config
+      name: {{ include "steampipe.fullname" . }}-initdb-sql-files
       optional: true
       items:
       {{- range $key, $value := .Values.steampipe.initDbSqlScripts }}
