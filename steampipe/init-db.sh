@@ -6,7 +6,7 @@ if ls "$SQL_DIR"/*.sql 1> /dev/null 2>&1; then
     echo "[init-db.sh] Starting DB Initialization as there are .sql scripts in ~/initdb-sql-scripts directory"
 
     while true; do  # Loop until the exit code of healthcheck.sh is 0
-        bash healthcheck.sh > /dev/null
+        bash healthcheck.sh
         exit_code=$?
 
         if [ $exit_code -eq 0 ]; then  # Check if the exit code is 0
@@ -17,6 +17,8 @@ if ls "$SQL_DIR"/*.sql 1> /dev/null 2>&1; then
             sleep 10
         fi
     done
+
+    sleep 5
 
     echo "[init-db.sh] Running SQL scripts:"
         for sql_file in "$SQL_DIR"/*.sql; do
