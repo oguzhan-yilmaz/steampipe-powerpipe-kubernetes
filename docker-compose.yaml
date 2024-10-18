@@ -8,6 +8,11 @@ services:
     environment:
         STEAMPIPE_DATABASE_PASSWORD: "abcd1234"
         INSTALL_PLUGINS: "steampipe kubernetes"
+        PGDATABASE: "steampipe"
+        PGHOST: "127.0.0.1"
+        PGPASSWORD: "abcd1234"
+        PGUSER: "steampipe"
+        PGPORT: "9193"
     ports:
       - "9193:9193"
     networks:
@@ -18,8 +23,9 @@ services:
       retries: 10
       start_period: 20s
       timeout: 5s
-    # volumes:
-    #   - ~/.kube/config:/home/steampipe/.kube/config  # mount kubeconfig
+    volumes:
+      - ~/.kube/config:/home/steampipe/.kube/config  # mount kubeconfig
+      - ./steampipe/init-db.sql:/home/steampipe/init-db-sql/custom-functions.sql
     #   - ~/.aws/credentials:/home/steampipe/.aws/credentials  # mount aws credentials
 
   powerpipe:
