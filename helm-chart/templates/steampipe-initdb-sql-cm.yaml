@@ -1,0 +1,12 @@
+# every key: data here will be mounted to ./steampipe/config/* 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "steampipe.fullname" . }}-config
+  labels:
+    {{- include "steampipe.labels" . | nindent 4 }}
+{{- if eq (len (.Values.steampipe.initDbSqlScripts | default (dict))) 0 }}
+data: {}
+{{- else }}
+data: {{ toYaml .Values.steampipe.initDbSqlScripts | nindent 2 }}
+{{- end }}

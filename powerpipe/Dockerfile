@@ -19,8 +19,8 @@ RUN apt-get update -y \
     && apt-get install -y curl tar unzip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-    && groupadd -g 1234 powerpipe \
-    && useradd -m -u 1234 -g powerpipe powerpipe
+    && groupadd -g 11234 powerpipe \
+    && useradd -m -u 11234 -g powerpipe powerpipe
 
 USER powerpipe
 

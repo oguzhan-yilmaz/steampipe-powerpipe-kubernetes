@@ -13,11 +13,11 @@ ENV STEAMPIPE_INSTALL_DIR="/home/steampipe/.steampipe"
 
 RUN apt-get update -y \
     && apt-get upgrade -y \
-    && apt-get install -y curl tar unzip \
+    && apt-get install -y curl tar unzip postgresql-client \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-    && groupadd -g 1234 steampipe \
-    && useradd -m -u 1234 -g steampipe steampipe
+    && groupadd -g 11234 steampipe \
+    && useradd -m -u 11234 -g steampipe steampipe
 
 USER steampipe
 
@@ -25,7 +25,8 @@ WORKDIR /home/steampipe
 
 RUN curl -sL -o steampipe.tar.gz ${STEAMPIPE_BINARY_DOWNLOAD_URL} \
     && tar -xzvf steampipe.tar.gz \
-    && rm steampipe.tar.gz
+    && rm steampipe.tar.gz \
+    && mkdir /home/steampipe/init-db-sql
     
 # start the service beforehand for faster startup time
 # and pre install selected plugins

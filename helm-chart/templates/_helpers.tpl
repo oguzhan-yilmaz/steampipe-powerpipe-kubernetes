@@ -1,7 +1,7 @@
 {{/*
 */}}
 {{- define "steampipe.containerVolumeMounts" -}}
-{{- if or .Values.steampipe.config .Values.steampipe.secretCredentials }}
+{{- if or (or .Values.steampipe.config .Values.steampipe.secretCredentials) .Values.steampipe.initDbSqlScripts }}
 volumeMounts:
   {{- range $key, $value := .Values.steampipe.config }}
   - name: steampipe-config-volume
@@ -13,6 +13,11 @@ volumeMounts:
     mountPath: /home/steampipe/{{ $config.directory }}/{{ $config.filename }}
     subPath: {{ $config.filename }}
   {{- end }}
+  {{- range $key, $value := .Values.steampipe.initDbSqlScripts }}
+  - name: steampipe-initdb-volume
+    mountPath: /home/steampipe/initdb-sql-scripts/{{ $key }}
+    subPath: {{ $key }}
+  {{- end }}
 {{- else }}
 volumeMounts: []
 {{- end }}
@@ -20,7 +25,7 @@ volumeMounts: []
 
 
 {{- define "steampipe.containerVolumes" -}}
-{{- if or .Values.steampipe.config .Values.steampipe.secretCredentials }}
+{{- if or (or .Values.steampipe.config .Values.steampipe.secretCredentials) .Values.steampipe.initDbSqlScripts }}
 volumes:
   {{- if or .Values.steampipe.config }}
   - name: steampipe-config-volume
@@ -32,7 +37,7 @@ volumes:
       - key: {{ $key }}
         path: {{ $key }}  # same as subPath
       {{- end }}
-    {{- end }}
+  {{- end }}
   {{- if or .Values.steampipe.secretCredentials }}
   - name: steampipe-credentials-volume
     secret:
@@ -43,7 +48,18 @@ volumes:
       - key: {{ $config.name }}
         path: {{ $config.filename }}  # same as subPath
       {{- end }}
-    {{- end }}
+  {{- end }}
+  {{- if or .Values.steampipe.initDbSqlScripts }}
+  - name: steampipe-initdb-volume
+    configMap:
+      name: {{ include "steampipe.fullname" . }}-config
+      optional: true
+      items:
+      {{- range $key, $value := .Values.steampipe.initDbSqlScripts }}
+      - key: {{ $key }}
+        path: {{ $key }}  # same as subPath
+      {{- end }}
+  {{- end }}
 {{- else }}
 volumes: []
 {{- end }}
