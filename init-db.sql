@@ -90,7 +90,7 @@ BEGIN
 $$;
 
 
--- CREATE OR REPLACE FUNCTION bytes_to_mib(bytes BIGINT)
+-- CREATE OR REPLACE FUNCTION bytes_to_mebib(bytes BIGINT)
 -- RETURNS NUMERIC AS $$
 -- BEGIN
 --     IF bytes IS NULL THEN
@@ -102,14 +102,15 @@ $$;
 -- $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION bytes_to_mi(bytes BIGINT)
-RETURNS TEXT AS $$
+CREATE OR REPLACE FUNCTION bytes_to_mebi(bytes BIGINT)
+RETURNS NUMERIC AS $$
 BEGIN
     IF bytes IS NULL THEN
         RETURN NULL; -- Handle NULL input
     END IF;
     
-    RETURN (bytes / 1048576)::TEXT || 'Mi'; -- Convert to text and append ' MiB'
+    -- RETURN (bytes / 1048576)::TEXT || 'Mi'; -- Convert to text and append ' MiB'
+    RETURN bytes / 1048576; -- Convert bytes to Mi
 END;
 $$ LANGUAGE plpgsql;
 
@@ -169,13 +170,13 @@ SELECT 'Memory Bytes to Milibyte(Mi) Conversion Tests' AS "Memory Bytes to Milib
 
 SELECT
     -- check conversions
-    bytes_to_mi(1073741824) AS "(1Gi)=1073741824b",
-    bytes_to_mi(512 * 1048576) AS "536870912b",
-    bytes_to_mi(256 * 1048576) AS "268435456b",
-    bytes_to_mi(10 * 1048576) AS "10485760",
-    bytes_to_mi(262144000)  = '250Mi' AS "262144000=250Mi",
-    bytes_to_mi(268435456)  = '256Mi' AS "268435456=256Mi=250Mb",
-    bytes_to_mi(1073741824) = '1024Mi' AS "1073741824=1024Mi=1Gi";
+    bytes_to_mebi(1073741824) AS "(1Gi)=1073741824b",
+    bytes_to_mebi(512 * 1048576) AS "536870912b",
+    bytes_to_mebi(256 * 1048576) AS "268435456b",
+    bytes_to_mebi(10 * 1048576) AS "10485760",
+    bytes_to_mebi(262144000)  = '250' AS "262144000=250Mi",
+    bytes_to_mebi(268435456)  = '256' AS "268435456=256Mi=250Mb",
+    bytes_to_mebi(1073741824) = '1024' AS "1073741824=1024Mi=1Gi";
 
 
 
