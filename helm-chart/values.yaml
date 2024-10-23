@@ -130,17 +130,11 @@ powerpipe:
   # Additional Secret Env variables for powerpipe
   secretEnvVars: {}
 
-  envVars: {}
-    # INSTALL_MODS will install Powerpipe modes at runtime
-    #   Note: INSTALL_MODS should be space separated
-    # Take look at available mods: https://hub.powerpipe.io/ 
-    
-    # INSTALL_MODS: "github.com/turbot/steampipe-mod-aws-insights github.com/turbot/steampipe-mod-aws-thrifty github.com/turbot/steampipe-mod-aws-top-10"
-    
-    # following yaml syntax (>) will merge newlines with spaces
-    # INSTALL_MODS: >
-    #   github.com/turbot/steampipe-mod-kubernetes-insights
-    #   github.com/turbot/steampipe-mod-kubernetes-compliance
+  # installMods will install Powerpipe modes at runtime
+  # Take look at available mods: https://hub.powerpipe.io/ 
+  installMods: 
+    - github.com/turbot/steampipe-mod-kubernetes-insights
+    - github.com/turbot/steampipe-mod-kubernetes-compliance
 
   replicaCount: 1
   containerPort: 9033
