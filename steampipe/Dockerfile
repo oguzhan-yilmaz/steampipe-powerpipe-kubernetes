@@ -23,15 +23,10 @@ USER steampipe
 
 WORKDIR /home/steampipe
 
-# RUN curl -sL -o steampipe.tar.gz ${STEAMPIPE_BINARY_DOWNLOAD_URL} \
-#     && tar -xzvf steampipe.tar.gz \
-#     && rm steampipe.tar.gz \
-#     && mkdir /home/steampipe/initdb-sql-scripts
-    
-RUN wget -O steampipe.tar.gz $STEAMPIPE_BINARY_DOWNLOAD_URL 
-RUN tar -xzvf steampipe.tar.gz 
-RUN rm steampipe.tar.gz 
-RUN mkdir /home/steampipe/initdb-sql-scripts
+RUN curl -sL -o steampipe.tar.gz ${STEAMPIPE_BINARY_DOWNLOAD_URL} \
+    && tar -xzvf steampipe.tar.gz \
+    && rm steampipe.tar.gz \
+    && mkdir /home/steampipe/initdb-sql-scripts
     
 # start the service beforehand for faster startup time
 # and pre install selected plugins
