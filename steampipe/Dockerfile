@@ -13,7 +13,7 @@ ENV STEAMPIPE_INSTALL_DIR="/home/steampipe/.steampipe"
 
 RUN apt-get update -y \
     && apt-get upgrade -y \
-    && apt-get install -y curl tar unzip postgresql-client \
+    && apt-get install -y curl wget tar unzip postgresql-client \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && groupadd -g 11234 steampipe \
@@ -28,7 +28,7 @@ WORKDIR /home/steampipe
 #     && rm steampipe.tar.gz \
 #     && mkdir /home/steampipe/initdb-sql-scripts
     
-RUN curl -sLv -o steampipe.tar.gz $STEAMPIPE_BINARY_DOWNLOAD_URL 
+RUN wget -O steampipe.tar.gz $STEAMPIPE_BINARY_DOWNLOAD_URL 
 RUN tar -xzvf steampipe.tar.gz 
 RUN rm steampipe.tar.gz 
 RUN mkdir /home/steampipe/initdb-sql-scripts
