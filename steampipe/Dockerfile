@@ -28,7 +28,7 @@ WORKDIR /home/steampipe
 #     && rm steampipe.tar.gz \
 #     && mkdir /home/steampipe/initdb-sql-scripts
     
-RUN curl -sL -o steampipe.tar.gz $STEAMPIPE_BINARY_DOWNLOAD_URL 
+RUN curl -sL -o steampipe.tar.gz "$STEAMPIPE_BINARY_DOWNLOAD_URL"
 RUN tar -xzvf steampipe.tar.gz 
 RUN rm steampipe.tar.gz 
 RUN mkdir /home/steampipe/initdb-sql-scripts
