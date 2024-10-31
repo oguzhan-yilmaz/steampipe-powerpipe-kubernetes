@@ -7,9 +7,7 @@ on:
   push:
     tags:
       - "v*.*.*" 
-  # push:
-  #   branches:
-  #     - 'main'
+
   #   paths:
   #     - 'steampipe/**'
   #     - 'powerpipe/**'
@@ -37,6 +35,10 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
+      
+      - name: Install jq
+        run: |
+          sudo snap install jq
 
       - name: Extract metadata (tags, labels) for Docker
         id: steampipemeta
@@ -46,6 +48,13 @@ jobs:
           tags: |
             type=semver,pattern={{version}}
             type=ref,event=branch
+      
+      - name: Find Latest Steampipe Release
+        id: latest_steampipe_release
+        run: |
+          STEAMPIPE_AMD64_URL=$(curl -s https://api.github.com/repos/turbot/steampipe/releases/latest | jq '.assets[] | select(.name == "steampipe_linux_amd64.tar.gz") | .browser_download_url')
+          echo "STEAMPIPE_AMD64_URL=$STEAMPIPE_AMD64_URL"
+          echo "download_url=$STEAMPIPE_AMD64_URL" >> $GITHUB_OUTPUT
 
       - name: Build and push Docker image -- steampipe
         uses: docker/build-push-action@v4
@@ -55,7 +64,14 @@ jobs:
           tags: ${{ steps.steampipemeta.outputs.tags }}
           labels: ${{ steps.steampipemeta.outputs.labels }}
           file: ./steampipe/Dockerfile
-          build-args: STEAMPIPE_BINARY_DOWNLOAD_URL=https://github.com/turbot/steampipe/releases/download/v0.24.2/steampipe_linux_amd64.tar.gz
+          build-args: STEAMPIPE_BINARY_DOWNLOAD_URL=${{ steps.latest_steampipe_release.outputs.package-download_url}}
+
+      - name: Find Latest Powerpipe Release
+        id: latest_powerpipe_release
+        run: |
+          POWERPIPE_AMD64_URL=$(curl -s https://api.github.com/repos/turbot/powerpipe/releases/latest | jq '.assets[] | select(.name == "powerpipe.linux.amd64.tar.gz") | .browser_download_url')
+          echo "POWERPIPE_AMD64_URL=$POWERPIPE_AMD64_URL"
+          echo "download_url=$POWERPIPE_AMD64_URL" >> $GITHUB_OUTPUT
 
       - name: Extract metadata (tags, labels) for Docker
         id: powerpipemeta
@@ -74,4 +90,4 @@ jobs:
           tags: ${{ steps.powerpipemeta.outputs.tags }}
           labels: ${{ steps.powerpipemeta.outputs.labels }}
           file: ./powerpipe/Dockerfile
-          build-args: POWERPIPE_BINARY_DOWNLOAD_URL=https://github.com/turbot/powerpipe/releases/download/v0.4.4/powerpipe.linux.amd64.tar.gz
+          build-args: POWERPIPE_BINARY_DOWNLOAD_URL=${{ steps.latest_powerpipe_release.outputs.package-download_url}}
