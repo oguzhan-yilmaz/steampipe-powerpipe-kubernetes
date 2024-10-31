@@ -8,10 +8,9 @@ on:
     tags:
       - "v*.*.*" 
 
-  #   paths:
-  #     - 'steampipe/**'
-  #     - 'powerpipe/**'
-  #     - '.github/workflows/docker-publish.yaml'
+  schedule:
+    # This cron expression runs at 00:00 (midnight) every Monday
+    - cron: '0 0 * * 1'
 
 env:
   REGISTRY: ghcr.io
@@ -52,7 +51,7 @@ jobs:
       - name: Find Latest Steampipe Release
         id: latest_steampipe_release
         run: |
-          STEAMPIPE_AMD64_URL=$(curl -s https://api.github.com/repos/turbot/steampipe/releases/latest | jq '.assets[] | select(.name == "steampipe_linux_amd64.tar.gz") | .browser_download_url')
+          STEAMPIPE_AMD64_URL=$(curl -s https://api.github.com/repos/turbot/steampipe/releases/latest | jq -r '.assets[] | select(.name == "steampipe_linux_amd64.tar.gz") | .browser_download_url')
           echo "STEAMPIPE_AMD64_URL=$STEAMPIPE_AMD64_URL"
           echo "download_url=$STEAMPIPE_AMD64_URL" >> $GITHUB_OUTPUT
 
@@ -69,7 +68,7 @@ jobs:
       - name: Find Latest Powerpipe Release
         id: latest_powerpipe_release
         run: |
-          POWERPIPE_AMD64_URL=$(curl -s https://api.github.com/repos/turbot/powerpipe/releases/latest | jq '.assets[] | select(.name == "powerpipe.linux.amd64.tar.gz") | .browser_download_url')
+          POWERPIPE_AMD64_URL=$(curl -s https://api.github.com/repos/turbot/powerpipe/releases/latest | jq -r '.assets[] | select(.name == "powerpipe.linux.amd64.tar.gz") | .browser_download_url')
           echo "POWERPIPE_AMD64_URL=$POWERPIPE_AMD64_URL"
           echo "download_url=$POWERPIPE_AMD64_URL" >> $GITHUB_OUTPUT
 
