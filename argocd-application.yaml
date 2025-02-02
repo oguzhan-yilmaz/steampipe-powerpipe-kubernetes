@@ -20,6 +20,12 @@ spec:
     helm:
       releaseName: steampipe-powerpipe
 
+
+      # Uncomment below to enable powerpipe-mod-kubernetes-vpa-right-sizing support
+      # valuesFiles:
+      #   - powerpipe-mod-kubernetes-vpa-right-sizing.values.yaml
+
+
       # # Values file as block file. This takes precedence over values
       # valuesObject:
       #   ingress:
