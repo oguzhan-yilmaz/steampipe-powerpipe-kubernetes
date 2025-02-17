@@ -8,9 +8,6 @@ on:
     tags:
       - "v*.*.*" 
 
-  schedule:
-    # This cron expression runs at 00:00 (midnight) every Monday
-    - cron: '0 0 * * 1'
 
 env:
   REGISTRY: ghcr.io
