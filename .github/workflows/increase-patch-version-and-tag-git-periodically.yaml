@@ -60,5 +60,6 @@ jobs:
           git config --local user.name "github-actions[bot]"
           
           echo "Creating new tag: ${NEW_VERSION}"
-          git tag -a "${NEW_VERSION}" -m "Release ${NEW_VERSION}"
+          git tag "${NEW_VERSION}"
+          echo "Pushing the new tag: ${NEW_VERSION}"
           git push --tags
