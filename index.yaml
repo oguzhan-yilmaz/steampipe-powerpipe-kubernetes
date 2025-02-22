@@ -3,6 +3,16 @@ entries:
   steampipe-powerpipe-kubernetes:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2025-02-22T09:43:24.466578192Z"
+    description: A Helm chart for deploying turbot's Steampipe and Powerpipe to Kubernetes
+    digest: 728232e88de642641a0096d1b25d872532d580464feeca3a347465fc3f4826ef
+    name: steampipe-powerpipe-kubernetes
+    type: application
+    urls:
+    - https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/releases/download/v0.10.0/steampipe-powerpipe-kubernetes-0.10.0.tgz
+    version: 0.10.0
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2025-02-17T14:27:57.486648333Z"
     description: A Helm chart for deploying turbot's Steampipe and Powerpipe to Kubernetes
     digest: cfab16213852cb3b388c4a71fd164f085687f9164eefbbeab16c825a98a76042
@@ -201,4 +211,4 @@ entries:
     urls:
     - https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/releases/download/v0.3.8/steampipe-powerpipe-kubernetes-0.3.8.tgz
     version: 0.3.8
-generated: "2025-02-17T14:27:57.485932745Z"
+generated: "2025-02-22T09:43:24.464996429Z"
