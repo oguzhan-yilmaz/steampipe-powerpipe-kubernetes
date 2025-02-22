@@ -79,19 +79,19 @@ jobs:
             **Helm Repo**
 
             ```bash
-            helm repo add oguzhan-yilmaz https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes 
+            helm repo add steampipe-powerpipe-kubernetes https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes 
             ```
 
             ```bash
-            helm repo update oguzhan-yilmaz
+            helm repo update steampipe-powerpipe-kubernetes
             ```
             
             **Helm Install (latest version)**
 
             ```bash
-            helm repo update oguzhan-yilmaz
+            helm repo update steampipe-powerpipe-kubernetes
 
-            helm show values oguzhan-yilmaz/steampipe-powerpipe-kubernetes > values.yaml
+            helm show values steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes > values.yaml
 
             # update the values.yaml on your own accord
 
@@ -99,13 +99,13 @@ jobs:
               -n turbot \
               -f values.yaml \
               --create-namespace \
-              oguzhan-yilmaz/steampipe-powerpipe-kubernetes
+              steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes
             ```
             
             **Helm Install (current version)**
 
             ```bash
-            helm show values oguzhan-yilmaz/steampipe-powerpipe-kubernetes --version ${{ steps.helm_package.outputs.package-version}} > values.yaml
+            helm show values steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes --version ${{ steps.helm_package.outputs.package-version}} > values.yaml
 
             # update the values.yaml on your own accord
 
@@ -114,7 +114,7 @@ jobs:
               -f values.yaml \
               --create-namespace \
               --version ${{ steps.helm_package.outputs.package-version}} \
-              oguzhan-yilmaz/steampipe-powerpipe-kubernetes
+              steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes
             ```
 
             **ArgoCD Application (current version)**

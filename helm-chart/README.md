@@ -7,27 +7,27 @@ A Helm chart to deploy [Steampipe](https://steampipe.io/) and [Powerpipe](https:
 ### Add Repo
 
 ```bash
-helm repo add oguzhan-yilmaz https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes
+helm repo add steampipe-powerpipe-kubernetesoguzhan-yilmaz https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes
 ```
 
 ```bash
-helm repo update oguzhan-yilmaz
+helm repo update steampipe-powerpipe-kubernetes
 ```
 
 ### Helm Install (latest version)
 
 ```bash
-helm repo update oguzhan-yilmaz
+helm repo update steampipe-powerpipe-kubernetes
 
 helm upgrade --install steampipe-powerpipe \
     -n turbot --create-namespace \
-    oguzhan-yilmaz/steampipe-powerpipe-kubernetes
+    steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes
 ```
 
 ### Helm Install (specific version)
 
 ```bash
-helm show values oguzhan-yilmaz/steampipe-powerpipe-kubernetes --version X.Y.Z > steampipe-powerpipe-values.yaml
+helm show values steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes --version X.Y.Z > steampipe-powerpipe-values.yaml
 
 # update the steampipe-powerpipe-values.yaml on your own accord
 
@@ -36,7 +36,7 @@ helm upgrade --install steampipe-powerpipe \
     -f steampipe-powerpipe-values.yaml \
     --create-namespace \
     --version X.Y.Z \
-    oguzhan-yilmaz/steampipe-powerpipe-kubernetes
+    steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes
 ```
 
 ## ArgoCD
