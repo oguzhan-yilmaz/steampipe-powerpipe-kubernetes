@@ -1,23 +1,6 @@
 # steampipe-powerpipe-kubernetes
 
-<p float="left">
-  <a href="https://artifacthub.io/packages/search?repo=steampipe-powerpipe-kubernetes">
-    <img src="https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/steampipe-powerpipe-kubernetes" alt="Artifact Hub">
-  </a>
-
-  <a href="https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/actions/workflows/docker-publish.yaml">
-    <img src="https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/actions/workflows/docker-publish.yaml/badge.svg" alt="Build and publish a steampipe and powerpipe images to ghcr.io">
-  </a>
-
-  <a href="https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/actions/workflows/helm-package-and-publish.yaml">
-    <img src="https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/actions/workflows/helm-package-and-publish.yaml/badge.svg" alt="Helm package and push to Github Pages">
-  </a>
-
-  <a href="https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/actions/workflows/pages/pages-build-deployment">
-    <img src="https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/actions/workflows/pages/pages-build-deployment/badge.svg" alt="pages-build-deployment">
-  </a>
-</p>
-
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/steampipe-powerpipe-kubernetes)](https://artifacthub.io/packages/helm/steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes)
 
 
 A Helm chart to deploy [Steampipe](https://steampipe.io/) and [Powerpipe](https://powerpipe.io/) to Kubernetes.
