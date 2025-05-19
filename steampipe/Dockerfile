@@ -35,10 +35,6 @@ RUN ./steampipe service start \
     && if [ -n "${PRE_INSTALL_PLUGINS}" ]; then ./steampipe plugin install ${PRE_INSTALL_PLUGINS} > /dev/null; fi
 
 COPY *.sh .
-RUN chmod +x healthcheck.sh
-
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD ./healthcheck.sh || exit 1
 
 EXPOSE 9193
 
