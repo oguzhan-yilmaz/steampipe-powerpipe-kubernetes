@@ -4,7 +4,7 @@ LABEL org.opencontainers.image.source https://github.com/oguzhan-yilmaz/steampip
 
 ENV DEBIAN_FRONTEND="noninteractive"
 
-ARG POWERPIPE_BINARY_DOWNLOAD_URL=""
+ARG POWERPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/powerpipe/releases/download/v1.2.6/powerpipe.linux.arm64.tar.gz"
 
 # space separated list of plugins at build time
 ARG PRE_INSTALL_MODS="github.com/turbot/steampipe-mod-kubernetes-insights github.com/turbot/steampipe-mod-kubernetes-compliance"
