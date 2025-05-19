@@ -1,4 +1,5 @@
 name: Build and publish a steampipe and powerpipe images to ghcr.io
+
 on:
   # publish on releases, e.g. v2.1.13 (image tagged as "2.1.13" - "v" prefix is removed)
   # release:
@@ -6,54 +7,72 @@ on:
 
   push:
     tags:
-      - "v*.*.*" 
+      - "v*.*.*"
 
+# Prevent concurrent workflows for the same ref
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   REGISTRY: ghcr.io
   STEAMPIPE_IMAGE_NAME: ${{ github.repository }}--steampipe
   POWERPIPE_IMAGE_NAME: ${{ github.repository }}--powerpipe
+  DOCKER_BUILDKIT: 1  # Enable BuildKit for better performance
 
 jobs:
   build-and-push-steampipe-and-powerpipe-docker-images:
     runs-on: ubuntu-latest
+    timeout-minutes: 20  # Add timeout to prevent hanging workflows
+    
     permissions:
       contents: read
       packages: write
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # Updated from v3
+        # with:
+        #   fetch-depth: 0  # Fetch all history for better versioning
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3  # Added for better build performance
 
       - name: Log in to the Container registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3  # Updated from v2
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
-      
+
       - name: Install jq
         run: |
-          sudo snap install jq
+          sudo apt-get update -y
+          sudo apt-get install -y jq  # Using apt-get instead of snap for better reliability
 
       - name: Extract metadata (tags, labels) for Docker
         id: steampipemeta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5  # Updated from v4
         with:
           images:  ${{ env.REGISTRY }}/${{ env.STEAMPIPE_IMAGE_NAME }}
           tags: |
             type=semver,pattern={{version}}
             type=ref,event=branch
-      
+            type=sha,format=short
+
       - name: Find Latest Steampipe Release
         id: latest_steampipe_release
         run: |
-          STEAMPIPE_AMD64_URL=$(curl -s https://api.github.com/repos/turbot/steampipe/releases/latest | jq -r '.assets[] | select(.name == "steampipe_linux_amd64.tar.gz") | .browser_download_url')
+          STEAMPIPE_AMD64_URL=$(curl -s --fail https://api.github.com/repos/turbot/steampipe/releases/latest | jq -r '.assets[] | select(.name == "steampipe_linux_amd64.tar.gz") | .browser_download_url')
+          if [ -z "$STEAMPIPE_AMD64_URL" ]; then
+            echo "Failed to get Steampipe download URL"
+            exit 1
+          fi
           echo "STEAMPIPE_AMD64_URL=$STEAMPIPE_AMD64_URL"
           echo "download_url=$STEAMPIPE_AMD64_URL" >> $GITHUB_OUTPUT
 
       - name: Build and push Docker image -- steampipe
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5  # Updated from v4
         with:
           context: ./steampipe
           push: true
@@ -61,25 +80,34 @@ jobs:
           labels: ${{ steps.steampipemeta.outputs.labels }}
           file: ./steampipe/Dockerfile
           build-args: STEAMPIPE_BINARY_DOWNLOAD_URL=${{ steps.latest_steampipe_release.outputs.download_url}}
+          cache-from: type=gha  # Enable GitHub Actions cache
+          cache-to: type=gha,mode=max
+          provenance: true  # Enable provenance attestation
+          sbom: true  # Enable SBOM generation
 
       - name: Find Latest Powerpipe Release
         id: latest_powerpipe_release
         run: |
-          POWERPIPE_AMD64_URL=$(curl -s https://api.github.com/repos/turbot/powerpipe/releases/latest | jq -r '.assets[] | select(.name == "powerpipe.linux.amd64.tar.gz") | .browser_download_url')
+          POWERPIPE_AMD64_URL=$(curl -s --fail https://api.github.com/repos/turbot/powerpipe/releases/latest | jq -r '.assets[] | select(.name == "powerpipe.linux.amd64.tar.gz") | .browser_download_url')
+          if [ -z "$POWERPIPE_AMD64_URL" ]; then
+            echo "Failed to get Powerpipe download URL"
+            exit 1
+          fi
           echo "POWERPIPE_AMD64_URL=$POWERPIPE_AMD64_URL"
           echo "download_url=$POWERPIPE_AMD64_URL" >> $GITHUB_OUTPUT
 
       - name: Extract metadata (tags, labels) for Docker
         id: powerpipemeta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5  # Updated from v4
         with:
           images:  ${{ env.REGISTRY }}/${{ env.POWERPIPE_IMAGE_NAME }}
           tags: |
             type=semver,pattern={{version}}
             type=ref,event=branch
-            
+            type=sha,format=short
+
       - name: Build and push Docker image -- powerpipe
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5  # Updated from v4
         with:
           context: ./powerpipe
           push: true
@@ -87,3 +115,7 @@ jobs:
           labels: ${{ steps.powerpipemeta.outputs.labels }}
           file: ./powerpipe/Dockerfile
           build-args: POWERPIPE_BINARY_DOWNLOAD_URL=${{ steps.latest_powerpipe_release.outputs.download_url}}
+          cache-from: type=gha  # Enable GitHub Actions cache
+          cache-to: type=gha,mode=max
+          provenance: true  # Enable provenance attestation
+          sbom: true  # Enable SBOM generation
