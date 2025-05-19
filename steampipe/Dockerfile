@@ -5,7 +5,7 @@ LABEL org.opencontainers.image.source https://github.com/oguzhan-yilmaz/steampip
 ENV DEBIAN_FRONTEND=noninteractive
 # space separated list of plugins at build time
 ARG PRE_INSTALL_PLUGINS="steampipe kubernetes"
-ARG STEAMPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/steampipe/releases/download/v0.24.2/steampipe_linux_arm64.tar.gz"
+ARG STEAMPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/steampipe/releases/download/v1.1.3/steampipe_linux_arm64.tar.gz"
 # space separated list of plugins to install at runtime
 ENV INSTALL_PLUGINS=""
 ENV STEAMPIPE_INSTALL_DIR="/home/steampipe/.steampipe"
@@ -35,6 +35,10 @@ RUN ./steampipe service start \
     && if [ -n "${PRE_INSTALL_PLUGINS}" ]; then ./steampipe plugin install ${PRE_INSTALL_PLUGINS} > /dev/null; fi
 
 COPY *.sh .
+RUN chmod +x healthcheck.sh
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD ./healthcheck.sh || exit 1
 
 EXPOSE 9193
 
