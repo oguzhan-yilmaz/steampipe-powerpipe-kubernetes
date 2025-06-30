@@ -1,26 +1,5 @@
 apiVersion: v1
 entries:
-  kdiff-snapshots:
-  - apiVersion: v2
-    appVersion: 1.16.0
-    created: "2025-06-30T19:57:21.230118353Z"
-    description: A Helm chart for Kubernetes
-    digest: 6f5b97796664dd196cbc96e80b91e58f519d17fe972dea0a922198ad55c5b9a6
-    name: kdiff-snapshots
-    type: application
-    urls:
-    - https://github.com/oguzhan-yilmaz/kdiff/releases/download/v0.0.3/kdiff-snapshots-0.0.3.tgz
-    version: 0.0.3
-  - apiVersion: v2
-    appVersion: 1.16.0
-    created: "2025-06-30T19:54:59.522128062Z"
-    description: A Helm chart for Kubernetes
-    digest: 57c79a031f2712a449bdf539b455d70b0115835bc3908d0f0180ba321a4d7dbc
-    name: kdiff-snapshots
-    type: application
-    urls:
-    - https://github.com/oguzhan-yilmaz/kdiff/releases/download/v0.0.2/kdiff-snapshots-0.0.2.tgz
-    version: 0.0.2
   steampipe-powerpipe-kubernetes:
   - apiVersion: v2
     appVersion: 1.16.0
