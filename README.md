@@ -81,7 +81,7 @@ powerpipe:
 **AWS Multi-Account:**
 ```yaml
 steampipe:
-  **config**:
+  config:
     aws.spc: |
       connection "aws_production" {
         plugin  = "aws"
