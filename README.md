@@ -55,20 +55,7 @@ kubectl apply -f https://raw.githubusercontent.com/oguzhan-yilmaz/steampipe-powe
 ### Quick Start
 
 **Basic Setup:**
-```yaml
-global:
-  steampipeDatabasePassword: "your-secure-password"
 
-steampipe:
-  envVars:
-    INSTALL_PLUGINS: "steampipe kubernetes"
-
-powerpipe:
-  installMods:
-    - github.com/turbot/steampipe-mod-kubernetes-insights
-```
-
-**Multi-Cloud Setup:**
 ```yaml
 global:
   steampipeDatabasePassword: "your-secure-password"
@@ -76,16 +63,6 @@ global:
 steampipe:
   envVars:
     INSTALL_PLUGINS: "steampipe kubernetes aws gcp azure"
-  
-  secretCredentials:
-    - name: aws-credentials
-      directory: ".aws"
-      filename: "credentials"
-      content: |
-        [default]
-        aws_access_key_id = YOUR_ACCESS_KEY
-        aws_secret_access_key = YOUR_SECRET_KEY
-        region = us-east-1
 
 powerpipe:
   installMods:
@@ -94,20 +71,6 @@ powerpipe:
     - github.com/turbot/steampipe-mod-kubernetes-compliance
 ```
 
-### Steampipe Configuration
-
-#### Plugin Management
-
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `steampipe.envVars.INSTALL_PLUGINS` | Space-separated list of plugins to install | `"steampipe kubernetes"` |
-
-**Available Plugins:**
-- **Cloud:** `aws`, `gcp`, `azure`, `alicloud`, `digitalocean`
-- **Infrastructure:** `kubernetes`, `docker`, `terraform`, `vault`
-- **Security:** `crowdstrike`, `okta`, `pagerduty`, `snyk`
-- **Development:** `github`, `gitlab`, `jira`, `slack`, `zoom`
-- **Databases:** `postgresql`, `mysql`, `mongodb`, `redis`
 
 #### Connection Configuration
 
@@ -130,6 +93,41 @@ steampipe:
         profile = "staging"
         regions = ["us-east-1", "us-west-2"]
       }
+```
+
+#### Multi-Profile AWS Configuration
+
+To use multiple AWS profiles, create both credentials and config files:
+
+```yaml
+steampipe:
+  secretCredentials:
+    - name: aws-credentials
+      directory: ".aws"
+      filename: "credentials"
+      content: |
+        [production]
+        aws_access_key_id = PROD_ACCESS_KEY
+        aws_secret_access_key = PROD_SECRET_KEY
+        region = us-east-1
+        
+        [staging]
+        aws_access_key_id = STAGING_ACCESS_KEY
+        aws_secret_access_key = STAGING_SECRET_KEY
+        region = us-west-2
+        
+        [development]
+        aws_access_key_id = DEV_ACCESS_KEY
+        aws_secret_access_key = DEV_SECRET_KEY
+        region = eu-west-1
+    
+    - name: aws-config
+      directory: ".aws"
+      filename: "config"
+      content: |
+        [profile production]
+        region = us-east-1
+        output = json
 ```
 
 **GCP Service Account:**
@@ -157,13 +155,6 @@ steampipe:
 |-----------|-------------|---------|
 | `powerpipe.installMods` | List of Powerpipe modules to install | `["github.com/turbot/steampipe-mod-kubernetes-insights", "github.com/turbot/steampipe-mod-kubernetes-compliance"]` |
 
-**Available Modules:**
-- **Kubernetes:** `steampipe-mod-kubernetes-insights`, `steampipe-mod-kubernetes-compliance`
-- **AWS:** `steampipe-mod-aws-compliance`, `steampipe-mod-aws-security`, `steampipe-mod-aws-thrifty`
-- **GCP:** `steampipe-mod-gcp-compliance`, `steampipe-mod-gcp-thrifty`
-- **Azure:** `steampipe-mod-azure-compliance`
-
-**Popular Combinations:**
 ```yaml
 # Multi-cloud compliance
 powerpipe:
@@ -179,28 +170,6 @@ powerpipe:
     - github.com/turbot/steampipe-mod-aws-security
     - github.com/turbot/steampipe-mod-kubernetes-compliance
 ```
-
-#### Access Configuration
-
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `powerpipe.ingress.enabled` | Enable external access via ingress | `false` |
-
-**NGINX Ingress:**
-```yaml
-powerpipe:
-  ingress:
-    enabled: true
-    className: "nginx"
-    annotations:
-      kubernetes.io/ingress.class: nginx
-    hosts:
-      - host: powerpipe.example.com
-        paths:
-          - path: /
-            pathType: Prefix
-```
-
 
 #### Useful Commands
 
