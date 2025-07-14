@@ -12,6 +12,7 @@ ARG PRE_INSTALL_MODS="github.com/turbot/steampipe-mod-kubernetes-insights github
 ENV INSTALL_MODS=""
 
 ENV POWERPIPE_INSTALL_DIR="/home/powerpipe/.powerpipe"
+ENV PATH="$PATH:/home/powerpipe"
 
 
 RUN apt-get update -y \
