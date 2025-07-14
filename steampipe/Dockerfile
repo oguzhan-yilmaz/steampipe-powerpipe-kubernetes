@@ -9,7 +9,7 @@ ARG STEAMPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/steampipe/releases/
 # space separated list of plugins to install at runtime
 ENV INSTALL_PLUGINS=""
 ENV STEAMPIPE_INSTALL_DIR="/home/steampipe/.steampipe"
-
+ENV INSTALL_PLUGINS="$PATH:/home/steampipe"
 
 RUN apt-get update -y \
     && apt-get upgrade -y \

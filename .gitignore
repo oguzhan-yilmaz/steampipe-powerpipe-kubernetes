@@ -1,3 +1,4 @@
+settings.json  
 secret
 *.tgz
 helm-chart/test.yaml
