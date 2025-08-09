@@ -27,37 +27,118 @@ spec:
 
 
       # # Values file as block file. This takes precedence over values
-      # valuesObject:
-      #   ingress:
-      #     enabled: true
-      #     path: /
-      #     hosts:
-      #       - mydomain.example.com
-      #     annotations:
-      #       kubernetes.io/ingress.class: nginx
-      #       kubernetes.io/tls-acme: "true"
-      #     labels: {}
-      #     tls:
-      #       - secretName: mydomain-tls
-      #         hosts:
-      #           - mydomain.example.com
+      valuesObject:
+        global:
+          # steampipeDatabasePassword will be used to set the Steampipe DB password
+          # and powerpipe DB Connection URL will get this value from here 
+          steampipeDatabasePassword: "1pjVZE4bYBkIGWpNTOgl"
 
-      # # Values file as block file. Prefer to use valuesObject if possible (see below)
-      # values: |
-      #   ingress:
-      #     enabled: true
-      #     path: /
-      #     hosts:
-      #       - mydomain.example.com
-      #     annotations:
-      #       kubernetes.io/ingress.class: nginx
-      #       kubernetes.io/tls-acme: "true"
-      #     labels: {}
-      #     tls:
-      #       - secretName: mydomain-tls
-      #         hosts:
-      #           - mydomain.example.com
+          # Enable to have Read Only access to the deployed cluster
+          steampipeCreateReadOnlyServiceAccount: true
 
+
+        steampipe:
+          # Additional Secret Env Vars for steampipe
+          secretEnvVars: {}
+
+          # Define non-secret Env Vars for steampipe
+          envVars:
+            # INSTALL_PLUGINS will install steampipe plugins at runtime.
+            #   Note: INSTALL_PLUGINS env. var. should be space separated
+            # Take look at available plugins: https://hub.steampipe.io/
+            # INSTALL_PLUGINS: "steampipe kubernetes aws"
+
+            # following yaml syntax (>) will merge newlines with spaces
+            INSTALL_PLUGINS: >
+              steampipe
+              kubernetes
+            
+            # set the default aws profile if you are passing aws credentials, or use .spc files
+            # AWS_PROFILE: "default" 
+
+
+          # secretCredentials will create Secret and
+          # will put the file content to  '~/{directory}/{filename}'
+          # useful for passing aws, gcp, kubeconfig credentials
+          secretCredentials: {}
+            # - name: kubeconfig  
+            #   directory: ".kube"
+            #   filename: "config"
+            #   content: |
+            #     example kubeconfig
+            # - name: aws-credentials
+            #   filename: credentials
+            #   directory: ".aws"
+            #   content: |
+            #     [default]
+            #     aws_access_key_id = AKIA6.........
+            #     aws_secret_access_key = vBXPp..................
+            #     region = eu-west-1
+
+
+          # .config is used to create a ConfigMap
+          # and will be mounted to ~/.steampipe/config/{key} — the filename being the key  
+          # use it to configure steampipe: https://steampipe.io/docs/reference/config-files/overview
+          config: {}
+            # aws.spc: |
+            #   connection "aws_account_a" {
+            #     plugin  = "aws"
+            #     profile = "default"
+            #     regions = ["us-*", "eu-*"]
+            #   }
+
+            #   connection "aws_account_b" {
+            #     plugin  = "aws"
+            #     profile = "another_profile"
+            #     regions = ["ap-southeast-1", "ap-southeast-2"]
+            #   }
+            # gcp.spc: |
+            #   connection "gcp_my_other_project" {
+            #     plugin      = "gcp"
+            #     project     = "my-other-project"
+            #     credentials = "/home/me/my-service-account-creds.json"
+            #   }
+            # kubernetes.spc: |
+            #   connection "kubernetes" {
+            #     plugin         = "kubernetes"
+            #     config_path    = "~/.kube/config"
+            #     config_context = "myCluster"
+            #     source_types   = ["deployed"]
+            #   }
+
+          resources: {}
+            # We usually recommend not to specify default resources and to leave this as a conscious
+            # choice for the user. This also increases chances charts run on environments with little
+            # resources, such as Minikube. If you do want to specify resources, uncomment the following
+            # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+            # limits:
+            #   cpu: 100m
+            #   memory: 128Mi
+            # requests:
+            #   cpu: 100m
+            #   memory: 128Mi
+
+        powerpipe:
+          secretEnvVars: {}
+
+          # installMods will install Powerpipe modes at runtime
+          # Take look at available mods: https://hub.powerpipe.io/ 
+          installMods: 
+            - github.com/turbot/steampipe-mod-kubernetes-insights
+            - github.com/turbot/steampipe-mod-kubernetes-compliance
+
+
+          resources: {}
+            # We usually recommend not to specify default resources and to leave this as a conscious
+            # choice for the user. This also increases chances charts run on environments with little
+            # resources, such as Minikube. If you do want to specify resources, uncomment the following
+            # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+            # limits:
+            #   cpu: 100m
+            #   memory: 128Mi
+            # requests:
+            #   cpu: 100m
+            #   memory: 128Mi
   # Destination cluster and namespace to deploy the application
   destination:
     name: in-cluster

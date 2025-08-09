@@ -77,6 +77,8 @@ steampipe:
     #   }
 
   initDbSqlScripts: {}
+  nameOverride: "steampipe"
+  fullnameOverride: "steampipe"
 
   replicaCount: 1
   containerPort: 9193
@@ -87,8 +89,7 @@ steampipe:
     tag: "latest"
 
   imagePullSecrets: []
-  nameOverride: "steampipe"
-  fullnameOverride: "steampipe"
+
 
   podAnnotations: {}
 
@@ -136,6 +137,9 @@ powerpipe:
     - github.com/turbot/steampipe-mod-kubernetes-insights
     - github.com/turbot/steampipe-mod-kubernetes-compliance
 
+  nameOverride: "powerpipe"
+  fullnameOverride: "powerpipe"
+
   replicaCount: 1
   containerPort: 9033
   image:
@@ -145,8 +149,6 @@ powerpipe:
     tag: "latest"
 
   imagePullSecrets: []
-  nameOverride: "powerpipe"
-  fullnameOverride: "powerpipe"
 
   podAnnotations: {}
 
