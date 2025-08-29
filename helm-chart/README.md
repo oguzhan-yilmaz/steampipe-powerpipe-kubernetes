@@ -10,7 +10,7 @@ A Helm chart to deploy [Steampipe](https://steampipe.io/) and [Powerpipe](https:
 ### Add Repo
 
 ```bash
-helm repo add steampipe-powerpipe-kubernetesoguzhan-yilmaz https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes
+helm repo add steampipe-powerpipe-kubernetes https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes
 ```
 
 ```bash
