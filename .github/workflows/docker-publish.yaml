@@ -63,16 +63,16 @@ jobs:
             type=ref,event=branch
             type=sha,format=short
 
-      - name: Find Latest Steampipe Release
+      - name: Find Latest Steampipe Release Version
         id: latest_steampipe_release
         run: |
-          STEAMPIPE_AMD64_URL=$(curl -s --fail https://api.github.com/repos/turbot/steampipe/releases/latest | jq -r '.assets[] | select(.name == "steampipe_linux_amd64.tar.gz") | .browser_download_url')
-          if [ -z "$STEAMPIPE_AMD64_URL" ]; then
-            echo "Failed to get Steampipe download URL"
+          STEAMPIPE_LATEST_VERSION=$(curl -s --fail https://api.github.com/repos/turbot/steampipe/releases/latest | jq -r '.tag_name')
+          if [ -z "$STEAMPIPE_LATEST_VERSION" ]; then
+            echo "Failed to get Steampipe release version"
             exit 1
           fi
-          echo "STEAMPIPE_AMD64_URL=$STEAMPIPE_AMD64_URL"
-          echo "download_url=$STEAMPIPE_AMD64_URL" >> $GITHUB_OUTPUT
+          echo "STEAMPIPE_LATEST_VERSION=$STEAMPIPE_LATEST_VERSION"
+          echo "latest_version=$STEAMPIPE_LATEST_VERSION" >> $GITHUB_OUTPUT
 
       - name: Build and push Docker image -- steampipe
         uses: docker/build-push-action@v5  # Updated from v4
@@ -83,22 +83,22 @@ jobs:
           tags: ${{ steps.steampipemeta.outputs.tags }}
           labels: ${{ steps.steampipemeta.outputs.labels }}
           file: ./steampipe/Dockerfile
-          build-args: STEAMPIPE_BINARY_DOWNLOAD_URL=${{ steps.latest_steampipe_release.outputs.download_url}}
+          build-args: STEAMPIPE_VERSION=${{ steps.latest_steampipe_release.outputs.latest_version}}
           cache-from: type=gha  # Enable GitHub Actions cache
           cache-to: type=gha,mode=max
           provenance: true  # Enable provenance attestation
           sbom: true  # Enable SBOM generation
 
-      - name: Find Latest Powerpipe Release
+      - name: Find Latest Powerpipe Release Version
         id: latest_powerpipe_release
         run: |
-          POWERPIPE_AMD64_URL=$(curl -s --fail https://api.github.com/repos/turbot/powerpipe/releases/latest | jq -r '.assets[] | select(.name == "powerpipe.linux.amd64.tar.gz") | .browser_download_url')
-          if [ -z "$POWERPIPE_AMD64_URL" ]; then
-            echo "Failed to get Powerpipe download URL"
+          POWERPIPE_LATEST_VERSION=$(curl -s --fail https://api.github.com/repos/turbot/powerpipe/releases/latest | jq -r '.tag_name')
+          if [ -z "$POWERPIPE_LATEST_VERSION" ]; then
+            echo "Failed to get Powerpipe release version"
             exit 1
           fi
-          echo "POWERPIPE_AMD64_URL=$POWERPIPE_AMD64_URL"
-          echo "download_url=$POWERPIPE_AMD64_URL" >> $GITHUB_OUTPUT
+          echo "POWERPIPE_LATEST_VERSION=$POWERPIPE_LATEST_VERSION"
+          echo "latest_version=$POWERPIPE_LATEST_VERSION" >> $GITHUB_OUTPUT
 
       - name: Extract metadata (tags, labels) for Docker
         id: powerpipemeta
@@ -119,7 +119,7 @@ jobs:
           tags: ${{ steps.powerpipemeta.outputs.tags }}
           labels: ${{ steps.powerpipemeta.outputs.labels }}
           file: ./powerpipe/Dockerfile
-          build-args: POWERPIPE_BINARY_DOWNLOAD_URL=${{ steps.latest_powerpipe_release.outputs.download_url}}
+          build-args: POWERPIPE_VERSION=${{ steps.latest_powerpipe_release.outputs.latest_version}}
           cache-from: type=gha  # Enable GitHub Actions cache
           cache-to: type=gha,mode=max
           provenance: true  # Enable provenance attestation

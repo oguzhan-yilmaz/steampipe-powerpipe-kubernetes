@@ -5,7 +5,7 @@ LABEL org.opencontainers.image.source https://github.com/oguzhan-yilmaz/steampip
 ENV DEBIAN_FRONTEND=noninteractive
 # space separated list of plugins at build time
 ARG PRE_INSTALL_PLUGINS="steampipe kubernetes"
-ARG STEAMPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/steampipe/releases/download/v1.1.3/steampipe_linux_arm64.tar.gz"
+ARG STEAMPIPE_VERSION
 # space separated list of plugins to install at runtime
 ENV INSTALL_PLUGINS=""
 ENV STEAMPIPE_INSTALL_DIR="/home/steampipe/.steampipe"
@@ -23,7 +23,10 @@ USER steampipe
 
 WORKDIR /home/steampipe
 
-RUN curl -sL -o steampipe.tar.gz ${STEAMPIPE_BINARY_DOWNLOAD_URL} \
+ARG TARGETARCH
+RUN STEAMPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/steampipe/releases/download/${STEAMPIPE_VERSION}/steampipe_linux_${TARGETARCH}.tar.gz" && \
+    echo "Downloading Steampipe from ${STEAMPIPE_BINARY_DOWNLOAD_URL}" && \
+    curl -sL -o steampipe.tar.gz "${STEAMPIPE_BINARY_DOWNLOAD_URL}" \
     && tar -xzvf steampipe.tar.gz \
     && rm steampipe.tar.gz \
     && mkdir /home/steampipe/initdb-sql-scripts
