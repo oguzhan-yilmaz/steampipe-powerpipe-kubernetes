@@ -35,6 +35,9 @@ jobs:
         # with:
         #   fetch-depth: 0  # Fetch all history for better versioning
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3  # Added for better build performance
 
@@ -76,6 +79,7 @@ jobs:
         with:
           context: ./steampipe
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.steampipemeta.outputs.tags }}
           labels: ${{ steps.steampipemeta.outputs.labels }}
           file: ./steampipe/Dockerfile
@@ -111,6 +115,7 @@ jobs:
         with:
           context: ./powerpipe
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.powerpipemeta.outputs.tags }}
           labels: ${{ steps.powerpipemeta.outputs.labels }}
           file: ./powerpipe/Dockerfile
