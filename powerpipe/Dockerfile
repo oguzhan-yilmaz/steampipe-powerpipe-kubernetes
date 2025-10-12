@@ -28,7 +28,7 @@ USER powerpipe
 WORKDIR /home/powerpipe
 
 ARG TARGETARCH
-RUN POWERPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/powerpipe/releases/download/${POWERPIPE_VERSION}/powerpipe_linux_${TARGETARCH}.tar.gz" && \
+RUN POWERPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/powerpipe/releases/download/${POWERPIPE_VERSION}/powerpipe.linux.${TARGETARCH}.tar.gz" && \
     echo "Downloading Powerpipe from ${POWERPIPE_BINARY_DOWNLOAD_URL}" && \
     curl -sL -o powerpipe.tar.gz "${POWERPIPE_BINARY_DOWNLOAD_URL}" \
     && tar -xzvf powerpipe.tar.gz \
