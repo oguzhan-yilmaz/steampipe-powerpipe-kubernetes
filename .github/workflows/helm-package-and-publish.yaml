@@ -1,12 +1,13 @@
 name: Helm package and push to Github Pages
 on:
-  push:
-    # run the Github Action on every tag versioned as v*.*.*
-    tags:
-      - "v*.*.*" 
+  workflow_run:
+    workflows: ["Build and publish a steampipe and powerpipe images to ghcr.io"]
+    types:
+      - completed
 
 jobs:
   helm-package-and-push-to-ghcr-io:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -15,6 +16,33 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Download release tag artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-tag
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Read tag from file
+        id: get_tag
+        run: |
+          tag=$(cat release_tag.txt)
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+
+      - name: Download dependency versions
+        uses: actions/download-artifact@v4
+        with:
+          name: dependency-versions
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Read dependency versions
+        id: read_versions
+        run: |
+          source dependency_versions.txt
+          echo "steampipe_version=$STEAMPIPE_VERSION" >> $GITHUB_OUTPUT
+          echo "powerpipe_version=$POWERPIPE_VERSION" >> $GITHUB_OUTPUT
       
       - name: Install Helm + yq + jq
         run: |
@@ -25,8 +53,8 @@ jobs:
       - name: Helm Package
         id: helm_package
         run: |
-          echo "Tag version: $GITHUB_REF"
-          RELEASE_TAG="${GITHUB_REF#refs/tags/}"
+          echo "Tag version: ${{ steps.get_tag.outputs.tag }}"
+          RELEASE_TAG="${{ steps.get_tag.outputs.tag }}"
           VERSION="${RELEASE_TAG:-v666.666.666}"
           echo "VERSION Version: $VERSION"
           CLEAN_VERSION="${VERSION#v}"
@@ -62,8 +90,8 @@ jobs:
       - name: Create new Release and upload helm artifact
         id: create_release_and_upload_artifacts
         uses: softprops/action-gh-release@v2.0.8
-        if: startsWith(github.ref, 'refs/tags/')
         with:
+          tag_name: ${{ steps.get_tag.outputs.tag }}
           files: |
             ${{ steps.helm_package.outputs.package-name}}
             ${{ steps.argocd-application.outputs.argocd-application-filename}}
@@ -76,6 +104,9 @@ jobs:
             Github Pages: <https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/>
             Github Pages (Helm index): <https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/index.yaml>
             
+            **Steampipe Version**: `${{ steps.read_versions.outputs.steampipe_version }}`
+            **Powerpipe Version**: `${{ steps.read_versions.outputs.powerpipe_version }}`
+
             **Helm Repo**
 
             ```bash

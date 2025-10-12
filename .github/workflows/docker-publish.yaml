@@ -35,6 +35,15 @@ jobs:
         # with:
         #   fetch-depth: 0  # Fetch all history for better versioning
 
+      - name: Save tag to file
+        run: echo "${GITHUB_REF#refs/tags/}" > release_tag.txt
+
+      - name: Upload tag as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-tag
+          path: release_tag.txt
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -124,3 +133,14 @@ jobs:
           cache-to: type=gha,mode=max
           provenance: true  # Enable provenance attestation
           sbom: true  # Enable SBOM generation
+
+      - name: Save dependency versions to artifact
+        run: |
+          echo "STEAMPIPE_VERSION=${{ steps.latest_steampipe_release.outputs.latest_version }}" > dependency_versions.txt
+          echo "POWERPIPE_VERSION=${{ steps.latest_powerpipe_release.outputs.latest_version }}" >> dependency_versions.txt
+
+      - name: Upload dependency versions as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-versions
+          path: dependency_versions.txt
