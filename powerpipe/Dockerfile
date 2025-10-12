@@ -30,8 +30,8 @@ WORKDIR /home/powerpipe
 RUN curl -sL -o powerpipe.tar.gz ${POWERPIPE_BINARY_DOWNLOAD_URL} \
     && tar -xzvf powerpipe.tar.gz \
     && rm powerpipe.tar.gz \
-    && yes | ./powerpipe mod init \
-    && if [ -n "${PRE_INSTALL_MODS}" ]; then ./powerpipe mod install ${PRE_INSTALL_MODS} > /dev/null; fi
+    && yes | powerpipe mod init \
+    && if [ -n "${PRE_INSTALL_MODS}" ]; then powerpipe mod install ${PRE_INSTALL_MODS} > /dev/null; fi
 
 COPY *.sh .
 

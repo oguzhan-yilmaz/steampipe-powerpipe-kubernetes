@@ -30,9 +30,9 @@ RUN curl -sL -o steampipe.tar.gz ${STEAMPIPE_BINARY_DOWNLOAD_URL} \
     
 # start the service beforehand for faster startup time
 # and pre install selected plugins
-RUN ./steampipe service start \
-    && ./steampipe service stop \
-    && if [ -n "${PRE_INSTALL_PLUGINS}" ]; then ./steampipe plugin install ${PRE_INSTALL_PLUGINS} > /dev/null; fi
+RUN steampipe service start \
+    && steampipe service stop \
+    && if [ -n "${PRE_INSTALL_PLUGINS}" ]; then steampipe plugin install ${PRE_INSTALL_PLUGINS} > /dev/null; fi
 
 COPY *.sh .
 
