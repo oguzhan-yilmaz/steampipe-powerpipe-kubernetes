@@ -3,7 +3,8 @@ services:
     build:
       context: ./steampipe
       args:
-        STEAMPIPE_BINARY_DOWNLOAD_URL: https://github.com/turbot/steampipe/releases/download/v0.24.2/steampipe_linux_arm64.tar.gz
+        # change for your platform
+        STEAMPIPE_BINARY_DOWNLOAD_URL: https://github.com/turbot/steampipe/releases/download/v2.2.0/steampipe_linux_arm64.tar.gz
         PRE_INSTALL_PLUGINS: "steampipe kubernetes" 
     environment:
         STEAMPIPE_DATABASE_PASSWORD: "abcd1234"
@@ -33,7 +34,8 @@ services:
       context: ./powerpipe
       args:
         PRE_INSTALL_MODS: "github.com/turbot/steampipe-mod-kubernetes-insights github.com/turbot/steampipe-mod-kubernetes-compliance"
-        POWERPIPE_BINARY_DOWNLOAD_URL: https://github.com/turbot/powerpipe/releases/download/v0.4.4/powerpipe.linux.arm64.tar.gz
+        # change for your platform
+        POWERPIPE_BINARY_DOWNLOAD_URL: https://github.com/turbot/powerpipe/releases/download/v1.4.1/powerpipe.linux.arm64.tar.gz
     environment:
       INSTALL_MODS: "github.com/turbot/steampipe-mod-kubernetes-insights github.com/turbot/steampipe-mod-kubernetes-compliance"
       POWERPIPE_DATABASE: postgres://steampipe:abcd1234@steampipe:9193/steampipe
