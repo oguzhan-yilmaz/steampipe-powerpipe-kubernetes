@@ -1,13 +1,16 @@
 FROM debian:bookworm-slim
 
-LABEL org.opencontainers.image.source https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes
+LABEL org.opencontainers.image.source=https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes
 
 ENV DEBIAN_FRONTEND="noninteractive"
 
-ARG POWERPIPE_VERSION
+ARG TARGETOS=linux
+ARG TARGETARCH
+ARG POWERPIPE_VERSION=v1.4.1
 
 # space separated list of plugins at build time
 ARG PRE_INSTALL_MODS="github.com/turbot/steampipe-mod-kubernetes-insights github.com/turbot/steampipe-mod-kubernetes-compliance"
+
 # space separated list of plugins to install at runtime
 ENV INSTALL_MODS=""
 
@@ -17,7 +20,7 @@ ENV PATH="$PATH:/home/powerpipe"
 
 RUN apt-get update -y \
     && apt-get upgrade -y \
-    && apt-get install -y curl tar unzip \
+    && apt-get install -y curl tar unzip coreutils \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && groupadd -g 11234 powerpipe \
@@ -27,10 +30,9 @@ USER powerpipe
 
 WORKDIR /home/powerpipe
 
-ARG TARGETARCH
-RUN POWERPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/powerpipe/releases/download/${POWERPIPE_VERSION}/powerpipe.linux.${TARGETARCH}.tar.gz" && \
-    echo "Downloading Powerpipe from ${POWERPIPE_BINARY_DOWNLOAD_URL}" && \
-    curl -sL -o powerpipe.tar.gz "${POWERPIPE_BINARY_DOWNLOAD_URL}" \
+RUN export POWERPIPE_BINARY_DOWNLOAD_URL="https://github.com/turbot/powerpipe/releases/download/${POWERPIPE_VERSION}/powerpipe.${TARGETOS}.${TARGETARCH}.tar.gz" \
+    && echo "POWERPIPE_BINARY_DOWNLOAD_URL=${POWERPIPE_BINARY_DOWNLOAD_URL}" \
+    && curl -sL -o powerpipe.tar.gz "${POWERPIPE_BINARY_DOWNLOAD_URL}" \
     && tar -xzvf powerpipe.tar.gz \
     && rm powerpipe.tar.gz \
     && yes | powerpipe mod init \
