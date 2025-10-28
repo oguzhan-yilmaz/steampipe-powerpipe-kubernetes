@@ -1,15 +1,18 @@
 FROM debian:bookworm-slim
 
-LABEL org.opencontainers.image.source https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes
+LABEL org.opencontainers.image.source=https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes
 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND="noninteractive"
 # space separated list of plugins at build time
-ARG PRE_INSTALL_PLUGINS="kubernetes"
 ARG TARGETOS=linux
 ARG TARGETARCH
 ARG STEAMPIPE_VERSION=v2.2.0
+
+ARG PRE_INSTALL_PLUGINS="kubernetes"
+
 # space separated list of plugins to install at runtime
 ENV INSTALL_PLUGINS=""
+
 ENV STEAMPIPE_INSTALL_DIR="/home/steampipe/.steampipe"
 ENV PATH="$PATH:/home/steampipe"
 
