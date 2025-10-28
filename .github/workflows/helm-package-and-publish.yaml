@@ -20,7 +20,7 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Download release tag artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: release-tag
           run-id: ${{ github.event.workflow_run.id }}
@@ -32,7 +32,7 @@ jobs:
           echo "tag=$tag" >> $GITHUB_OUTPUT
 
       - name: Download dependency versions
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: dependency-versions
           run-id: ${{ github.event.workflow_run.id }}
