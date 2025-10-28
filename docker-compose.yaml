@@ -3,15 +3,14 @@ services:
     build:
       context: ./steampipe
       args:
-        # change for your platform
-        STEAMPIPE_BINARY_DOWNLOAD_URL: https://github.com/turbot/steampipe/releases/download/v2.2.0/steampipe_linux_arm64.tar.gz
-        PRE_INSTALL_PLUGINS: "steampipe kubernetes" 
+        STEAMPIPE_VERSION: v2.2.0
+        PRE_INSTALL_PLUGINS: "kubernetes"
+    env_file:
+      - .env
     environment:
-        STEAMPIPE_DATABASE_PASSWORD: "abcd1234"
-        INSTALL_PLUGINS: "steampipe kubernetes"
         PGDATABASE: "steampipe"
         PGHOST: "127.0.0.1"
-        PGPASSWORD: "abcd1234"
+        PGPASSWORD: ${STEAMPIPE_DATABASE_PASSWORD-abcd123123}
         PGUSER: "steampipe"
         PGPORT: "9193"
     ports:
@@ -33,12 +32,12 @@ services:
     build:
       context: ./powerpipe
       args:
+        POWERPIPE_VERSION: v1.4.1
         PRE_INSTALL_MODS: "github.com/turbot/steampipe-mod-kubernetes-insights github.com/turbot/steampipe-mod-kubernetes-compliance"
-        # change for your platform
-        POWERPIPE_BINARY_DOWNLOAD_URL: https://github.com/turbot/powerpipe/releases/download/v1.4.1/powerpipe.linux.arm64.tar.gz
+    env_file:
+      - .env
     environment:
-      INSTALL_MODS: "github.com/turbot/steampipe-mod-kubernetes-insights github.com/turbot/steampipe-mod-kubernetes-compliance"
-      POWERPIPE_DATABASE: postgres://steampipe:abcd1234@steampipe:9193/steampipe
+      POWERPIPE_DATABASE: postgres://steampipe:${STEAMPIPE_DATABASE_PASSWORD}@steampipe:9193/steampipe
     ports:
       - "9033:9033"
     depends_on:
