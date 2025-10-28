@@ -97,7 +97,6 @@ jobs:
           cache-to: type=gha,mode=max
           provenance: true  # Enable provenance attestation
           sbom: true  # Enable SBOM generation
-          progress: plain    
 
       - name: Find Latest Powerpipe Release Version
         id: latest_powerpipe_release
@@ -134,7 +133,6 @@ jobs:
           cache-to: type=gha,mode=max
           provenance: true  # Enable provenance attestation
           sbom: true  # Enable SBOM generation
-          progress: plain    
       - name: Save dependency versions to artifact
         run: |
           echo "STEAMPIPE_VERSION=${{ steps.latest_steampipe_release.outputs.latest_version }}" > dependency_versions.txt
