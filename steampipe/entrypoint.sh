@@ -22,4 +22,5 @@ if [ -f "init-db.sh" ]; then
 fi
 
 echo "Starting Steampipe:"
-./steampipe service start --foreground
+export PGPASSWORD="${STEAMPIPE_DATABASE_PASSWORD}"
+./steampipe service start --foreground --database-listen network
