@@ -10,45 +10,41 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
 
-      - name: Download release tag artifact
-        uses: actions/download-artifact@v5
-        with:
-          name: release-tag
-          run-id: ${{ github.event.workflow_run.id }}
-
-      - name: Read tag from file
+      - name: Resolve release tag
         id: get_tag
         run: |
-          tag=$(cat release_tag.txt)
-          echo "tag=$tag" >> $GITHUB_OUTPUT
+          git fetch --tags --force
+          tag=$(git describe --tags --exact-match HEAD)
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
-      - name: Download dependency versions
-        uses: actions/download-artifact@v5
-        with:
-          name: dependency-versions
-          run-id: ${{ github.event.workflow_run.id }}
-
-      - name: Read dependency versions
+      - name: Resolve dependency versions
         id: read_versions
         run: |
-          source dependency_versions.txt
-          echo "steampipe_version=$STEAMPIPE_VERSION" >> $GITHUB_OUTPUT
-          echo "powerpipe_version=$POWERPIPE_VERSION" >> $GITHUB_OUTPUT
-      
+          STEAMPIPE_VERSION=$(curl -s --fail https://api.github.com/repos/turbot/steampipe/releases/latest | jq -r '.tag_name')
+          POWERPIPE_VERSION=$(curl -s --fail https://api.github.com/repos/turbot/powerpipe/releases/latest | jq -r '.tag_name')
+          if [ -z "$STEAMPIPE_VERSION" ] || [ -z "$POWERPIPE_VERSION" ]; then
+            echo "Failed to resolve Steampipe or Powerpipe release version"
+            exit 1
+          fi
+          echo "steampipe_version=$STEAMPIPE_VERSION" >> "$GITHUB_OUTPUT"
+          echo "powerpipe_version=$POWERPIPE_VERSION" >> "$GITHUB_OUTPUT"
+
       - name: Install Helm + yq + jq
         run: |
+          sudo apt-get update -y
+          sudo apt-get install -y jq
           sudo snap install yq
           sudo snap install helm --classic
-          sudo snap install jq
 
       - name: Helm Package
         id: helm_package
@@ -68,7 +64,6 @@ jobs:
           # save the generated package name to github_output to pass it to next step
           echo "package-name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
           echo "package-version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
-      
 
       - name: Patch argocd application yaml
         id: argocd-application
@@ -80,7 +75,7 @@ jobs:
           echo "Patched targetRevision: $(yq '.spec.source.targetRevision' $VERSIONED_ARGOCD_APP_YAML)"
           # save to the github_output to pass it to next step
           echo "argocd-application-filename=$VERSIONED_ARGOCD_APP_YAML" >> $GITHUB_OUTPUT
-      
+
       - name: Print helm_package step output
         run: |
           echo "package-name=$MESSAGE"
@@ -89,7 +84,7 @@ jobs:
 
       - name: Create new Release and upload helm artifact
         id: create_release_and_upload_artifacts
-        uses: softprops/action-gh-release@v2.0.8
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.get_tag.outputs.tag }}
           files: |
@@ -137,7 +132,7 @@ jobs:
       - name: print release upload output
         run: |
           echo "assets=${{ steps.create_release_and_upload_artifacts.outputs.assets}}"
-          
+
       - name: Save artifact download url
         id: helm_package_download_url
         run: |
@@ -175,7 +170,7 @@ jobs:
           cat gh-pages-clone/index.yaml
           rm gh-pages-clone/index.yaml
           cp index.yaml gh-pages-clone/index.yaml
-          
+
           # check out the new index.yaml
           cd gh-pages-clone
           pwd
