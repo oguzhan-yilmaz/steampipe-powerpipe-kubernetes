@@ -1,58 +1,61 @@
+# Local development stack. Configure versions and secrets in .env, then:
+#   docker compose up --build
+name: steampipe-powerpipe
+
 services:
   steampipe:
     build:
       context: ./steampipe
       args:
-        STEAMPIPE_VERSION: v2.2.0
-        PRE_INSTALL_PLUGINS: "kubernetes"
+        STEAMPIPE_VERSION: ${STEAMPIPE_VERSION}
+        PRE_INSTALL_PLUGINS: kubernetes
+    container_name: steampipe
+    restart: unless-stopped
     env_file:
       - .env
     environment:
-        PGDATABASE: "steampipe"
-        PGHOST: "127.0.0.1"
-        PGPASSWORD: ${STEAMPIPE_DATABASE_PASSWORD-abcd123123}
-        PGUSER: "steampipe"
-        PGPORT: "9193"
+      # Runtime plugin installs (see helm-chart/values.yaml steampipe.envVars)
+      INSTALL_PLUGINS: steampipe kubernetes
+      PGDATABASE: steampipe
+      PGHOST: 127.0.0.1
+      PGUSER: steampipe
+      PGPORT: "9193"
+      # STEAMPIPE_DATABASE_PASSWORD and PGPASSWORD come from .env via env_file.
+      # entrypoint.sh exports PGPASSWORD before starting the service.
     ports:
       - "9193:9193"
+    volumes:
+      - ~/.kube/config:/home/steampipe/.kube/config:ro
+      # Uncomment after creating steampipe/init-db.sql (see steampipe/init-db.sh):
+      # - ./steampipe/init-db.sql:/home/steampipe/initdb-sql-scripts/custom-functions.sql:ro
+      # - ~/.aws/credentials:/home/steampipe/.aws/credentials:ro
     networks:
       - turbot
-    healthcheck:
-      test: ["CMD-SHELL", "bash ./healthcheck.sh"]
-      interval: 10s
-      retries: 10
-      start_period: 20s
-      timeout: 5s
-    volumes:
-      - ~/.kube/config:/home/steampipe/.kube/config  # mount kubeconfig
-      - ./steampipe/init-db.sql:/home/steampipe/initdb-sql-scripts/custom-functions.sql
-    #   - ~/.aws/credentials:/home/steampipe/.aws/credentials  # mount aws credentials
+    # healthcheck: defined in steampipe/Dockerfile
 
   powerpipe:
     build:
       context: ./powerpipe
       args:
-        POWERPIPE_VERSION: v1.4.1
+        POWERPIPE_VERSION: ${POWERPIPE_VERSION}
         PRE_INSTALL_MODS: "github.com/turbot/steampipe-mod-kubernetes-insights github.com/turbot/steampipe-mod-kubernetes-compliance"
+    container_name: powerpipe
+    restart: unless-stopped
     env_file:
       - .env
     environment:
-      POWERPIPE_DATABASE: postgres://steampipe:${STEAMPIPE_DATABASE_PASSWORD}@steampipe:9193/steampipe
+      STEAMPIPE_HOST: steampipe
+      # STEAMPIPE_DATABASE_PASSWORD comes from .env via env_file.
+      # entrypoint.sh writes connection.steampipe.default to ~/.powerpipe/config/default.ppc.
     ports:
       - "9033:9033"
     depends_on:
       steampipe:
         condition: service_healthy
         restart: true
-    healthcheck:
-      test: ["CMD-SHELL", "bash ./healthcheck.sh"]
-      interval: 10s
-      retries: 5
-      start_period: 20s
-      timeout: 5s
     networks:
       - turbot
-
+    # healthcheck: defined in powerpipe/Dockerfile
 
 networks:
   turbot:
