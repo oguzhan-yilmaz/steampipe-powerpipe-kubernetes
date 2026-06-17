@@ -90,9 +90,13 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.steampipemeta.outputs.tags }}
-          labels: ${{ steps.steampipemeta.outputs.labels }}
           file: ./steampipe/Dockerfile
-          build-args: STEAMPIPE_VERSION=${{ steps.latest_steampipe_release.outputs.latest_version}}
+          build-args: |
+            STEAMPIPE_VERSION=${{ steps.latest_steampipe_release.outputs.latest_version }}
+            PRE_INSTALL_PLUGINS=kubernetes
+          labels: |
+            ${{ steps.steampipemeta.outputs.labels }}
+            dev.turbot.steampipe.version=${{ steps.latest_steampipe_release.outputs.latest_version }}
           cache-from: type=gha  # Enable GitHub Actions cache
           cache-to: type=gha,mode=max
           provenance: true  # Enable provenance attestation
@@ -126,9 +130,13 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.powerpipemeta.outputs.tags }}
-          labels: ${{ steps.powerpipemeta.outputs.labels }}
           file: ./powerpipe/Dockerfile
-          build-args: POWERPIPE_VERSION=${{ steps.latest_powerpipe_release.outputs.latest_version}}
+          build-args: |
+            POWERPIPE_VERSION=${{ steps.latest_powerpipe_release.outputs.latest_version }}
+            PRE_INSTALL_MODS=github.com/turbot/steampipe-mod-kubernetes-insights github.com/turbot/steampipe-mod-kubernetes-compliance
+          labels: |
+            ${{ steps.powerpipemeta.outputs.labels }}
+            dev.turbot.powerpipe.version=${{ steps.latest_powerpipe_release.outputs.latest_version }}
           cache-from: type=gha  # Enable GitHub Actions cache
           cache-to: type=gha,mode=max
           provenance: true  # Enable provenance attestation
