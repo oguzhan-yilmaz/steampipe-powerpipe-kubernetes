@@ -2,59 +2,53 @@
 
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/steampipe-powerpipe-kubernetes)](https://artifacthub.io/packages/helm/steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes)
 
-
 A Helm chart to deploy [Steampipe](https://steampipe.io/) and [Powerpipe](https://powerpipe.io/) to Kubernetes.
 
 ## Helm
 
-### Add Repo
-
 ```bash
 helm repo add steampipe-powerpipe-kubernetes https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes
-```
-
-```bash
 helm repo update steampipe-powerpipe-kubernetes
 ```
 
-### Helm Install (latest version)
+### Install
 
 ```bash
-helm repo update steampipe-powerpipe-kubernetes
+helm show values steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes > values.yaml  # --version X.Y.Z
+# edit values.yaml
 
 helm upgrade --install steampipe-powerpipe \
     -n turbot --create-namespace \
-    steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes
+    -f values.yaml \
+    steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes  # --version X.Y.Z
 ```
 
-### Helm Install (specific version)
-
-```bash
-helm show values steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes --version X.Y.Z > steampipe-powerpipe-values.yaml
-
-# update the steampipe-powerpipe-values.yaml on your own accord
-
-helm upgrade --install steampipe-powerpipe \
-    -n turbot \
-    -f steampipe-powerpipe-values.yaml \
-    --create-namespace \
-    --version X.Y.Z \
-    steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes
-```
+Tagged releases (`v*.*.*`) publish Docker images to GHCR, package the chart, and update the Helm repo index. See [Releases](https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/releases) for bundled Steampipe/Powerpipe versions.
 
 ## ArgoCD
 
-You can use the `argocd-application.yaml` manifest in the Github repo: <https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/blob/main/argocd-application.yaml>
+Apply the manifest from the repo, or use the versioned asset from a release (`argocd-application-X.Y.Z.yaml`):
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/refs/heads/main/argocd-application.yaml
 ```
 
+## Local Development
+
+**Docker Compose** — configure `.env`, then:
+
+```bash
+docker compose up --build
+```
+
+- Steampipe: `localhost:9193`
+- Powerpipe: `http://localhost:9033`
+
+**Kind** — see [.development/kind-cluster-test.md](.development/kind-cluster-test.md).
+
 ## Configuration
 
 ### Quick Start
-
-**Basic Setup:**
 
 ```yaml
 global:
@@ -71,14 +65,16 @@ powerpipe:
     - github.com/turbot/steampipe-mod-kubernetes-compliance
 ```
 
+Powerpipe connects to Steampipe via `STEAMPIPE_HOST` and `STEAMPIPE_DATABASE_PASSWORD` (set from `global.steampipeDatabasePassword`).
 
-#### Connection Configuration
+### Connection Configuration
 
 | Parameter | Description |
 |-----------|-------------|
 | `steampipe.config` | Steampipe connection configuration files |
 
 **AWS Multi-Account:**
+
 ```yaml
 steampipe:
   config:
@@ -95,9 +91,7 @@ steampipe:
       }
 ```
 
-#### Multi-Profile AWS Configuration
-
-To use multiple AWS profiles, create both credentials and config files:
+**Multi-Profile AWS** — mount credentials and config via `steampipe.secretCredentials`:
 
 ```yaml
 steampipe:
@@ -110,17 +104,6 @@ steampipe:
         aws_access_key_id = PROD_ACCESS_KEY
         aws_secret_access_key = PROD_SECRET_KEY
         region = us-east-1
-        
-        [staging]
-        aws_access_key_id = STAGING_ACCESS_KEY
-        aws_secret_access_key = STAGING_SECRET_KEY
-        region = us-west-2
-        
-        [development]
-        aws_access_key_id = DEV_ACCESS_KEY
-        aws_secret_access_key = DEV_SECRET_KEY
-        region = eu-west-1
-    
     - name: aws-config
       directory: ".aws"
       filename: "config"
@@ -131,6 +114,7 @@ steampipe:
 ```
 
 **GCP Service Account:**
+
 ```yaml
 steampipe:
   secretCredentials:
@@ -147,48 +131,37 @@ steampipe:
         }
 ```
 
-### Powerpipe Configuration
-
-#### Module Management
+### Powerpipe Mods
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `powerpipe.installMods` | List of Powerpipe modules to install | `["github.com/turbot/steampipe-mod-kubernetes-insights", "github.com/turbot/steampipe-mod-kubernetes-compliance"]` |
+| `powerpipe.installMods` | Mods to install at runtime | kubernetes-insights, kubernetes-compliance |
 
 ```yaml
-# Multi-cloud compliance
 powerpipe:
   installMods:
     - github.com/turbot/steampipe-mod-aws-compliance
     - github.com/turbot/steampipe-mod-gcp-compliance
     - github.com/turbot/steampipe-mod-kubernetes-compliance
-
-# Security and compliance
-powerpipe:
-  installMods:
-    - github.com/turbot/steampipe-mod-aws-compliance
-    - github.com/turbot/steampipe-mod-aws-security
-    - github.com/turbot/steampipe-mod-kubernetes-compliance
 ```
 
-#### Useful Commands
+### Useful Commands
 
 ```bash
-# Check status
 kubectl get pods -n turbot
 
-# Test plugin functionality
-kubectl exec -n turbot deployment/steampipe -- steampipe query "select * from aws_ec2_instance"
+kubectl exec -n turbot deployment/steampipe -- steampipe query "select * from kubernetes_pod limit 5"
 
-# Check module dashboards
 kubectl exec -n turbot deployment/powerpipe -- powerpipe dashboard list
+
+kubectl port-forward -n turbot svc/powerpipe 9033:80
 ```
 
-### References
+## References
 
-| Name                      | URL                                                                          |
-| ------------------------- | ---------------------------------------------------------------------------- |
-| Github Repo               | <https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes>           |
-| Github Releases           | <https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/releases>  |
-| Github Pages              | <https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/>           |
-| Github Pages — Helm index | <https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/index.yaml> |
+| Name | URL |
+|------|-----|
+| Github Repo | <https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes> |
+| Github Releases | <https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/releases> |
+| Github Pages | <https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/> |
+| Helm index | <https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/index.yaml> |

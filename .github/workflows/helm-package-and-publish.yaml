@@ -110,50 +110,28 @@ jobs:
             **Helm Repo**
 
             ```bash
-            helm repo add steampipe-powerpipe-kubernetes https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes 
-            ```
-
-            ```bash
+            helm repo add steampipe-powerpipe-kubernetes https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes
             helm repo update steampipe-powerpipe-kubernetes
             ```
-            
-            **Helm Install (latest version)**
+
+            **Helm Install**
 
             ```bash
-            helm repo update steampipe-powerpipe-kubernetes
-
-            helm show values steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes > values.yaml
-
-            # update the values.yaml on your own accord
+            helm show values steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes > values.yaml  # --version ${{ steps.helm_package.outputs.package-version }}
+            # edit values.yaml
 
             helm upgrade --install steampipe-powerpipe \
-              -n turbot \
+              -n turbot --create-namespace \
               -f values.yaml \
-              --create-namespace \
-              steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes
-            ```
-            
-            **Helm Install (current version)**
-
-            ```bash
-            helm show values steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes --version ${{ steps.helm_package.outputs.package-version}} > values.yaml
-
-            # update the values.yaml on your own accord
-
-            helm upgrade --install steampipe-powerpipe \
-              -n turbot \
-              -f values.yaml \
-              --create-namespace \
-              --version ${{ steps.helm_package.outputs.package-version}} \
-              steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes
+              steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes  # --version ${{ steps.helm_package.outputs.package-version }}
             ```
 
-            **ArgoCD Application (current version)**
+            **ArgoCD Application**
 
-            First, download the `argocd-application-X.Y.Z.yaml` from assets.
+            Download `argocd-application-${{ steps.helm_package.outputs.package-version }}.yaml` from release assets.
 
             ```bash
-            kubectl apply -f argocd-application-X.Y.Z.yaml
+            kubectl apply -f argocd-application-${{ steps.helm_package.outputs.package-version }}.yaml
             ```
 
       - name: print release upload output

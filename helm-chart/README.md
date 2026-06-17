@@ -2,63 +2,58 @@
 
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/steampipe-powerpipe-kubernetes)](https://artifacthub.io/packages/helm/steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes)
 
-
 A Helm chart to deploy [Steampipe](https://steampipe.io/) and [Powerpipe](https://powerpipe.io/) to Kubernetes.
 
 ## Helm
 
-### Add Repo
-
 ```bash
 helm repo add steampipe-powerpipe-kubernetes https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes
-```
-
-```bash
 helm repo update steampipe-powerpipe-kubernetes
 ```
 
-### Helm Install (latest version)
+### Install
 
 ```bash
-helm repo update steampipe-powerpipe-kubernetes
+helm show values steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes > values.yaml  # --version X.Y.Z
+# edit values.yaml
 
 helm upgrade --install steampipe-powerpipe \
     -n turbot --create-namespace \
-    steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes
+    -f values.yaml \
+    steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes  # --version X.Y.Z
 ```
 
-### Helm Install (specific version)
+### Install from local chart
 
 ```bash
-helm show values steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes --version X.Y.Z > steampipe-powerpipe-values.yaml
-
-# update the steampipe-powerpipe-values.yaml on your own accord
-
-helm upgrade --install steampipe-powerpipe \
-    -n turbot \
-    -f steampipe-powerpipe-values.yaml \
-    --create-namespace \
-    --version X.Y.Z \
-    steampipe-powerpipe-kubernetes/steampipe-powerpipe-kubernetes
+helm upgrade --install steampipe-powerpipe . \
+    -n turbot --create-namespace \
+    -f values.yaml
 ```
 
-## ArgoCD
+Tagged releases (`v*.*.*`) publish images to GHCR, package this chart, and update the Helm repo index. Release assets include `steampipe-powerpipe-kubernetes-X.Y.Z.tgz` and `argocd-application-X.Y.Z.yaml`.
 
-You can use the `argocd-application.yaml` manifest in the Github repo: <https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/blob/main/argocd-application.yaml>
+## ArgoCD
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/refs/heads/main/argocd-application.yaml
 ```
 
-### References
+For a pinned chart version, download `argocd-application-X.Y.Z.yaml` from [Releases](https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/releases).
 
-| Name                      | URL                                                                          |
-| ------------------------- | ---------------------------------------------------------------------------- |
-| Github Repo               | <https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes>           |
-| Github Releases           | <https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/releases>  |
-| Github Pages              | <https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/>           |
-| Github Pages — Helm index | <https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/index.yaml> |
+## Configuration
+
+See the [project README](../README.md#configuration) for values examples (plugins, credentials, mods).
+
+## References
+
+| Name | URL |
+|------|-----|
+| Github Repo | <https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes> |
+| Github Releases | <https://github.com/oguzhan-yilmaz/steampipe-powerpipe-kubernetes/releases> |
+| Github Pages | <https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/> |
+| Helm index | <https://oguzhan-yilmaz.github.io/steampipe-powerpipe-kubernetes/index.yaml> |
 
 ---
 
-- Maintainers: oguzhan-yilmaz <https://github.com/oguzhan-yilmaz>
+Maintainers: [oguzhan-yilmaz](https://github.com/oguzhan-yilmaz)
